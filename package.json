@@ -1,0 +1,31 @@
+{
+  "name": "harp",
+  "version": "1.X.X",
+  "description": "",
+  "main": "index.js",
+  "dependencies": {
+    "@types/cannon": "^X.1.5",
+    "@types/three": "^X.126.1",
+    "cannon": "^X.6.2",
+    "three": "^X.126.1"
+  },
+  "devDependencies": {
+    "typescript": "^4.1.5",
+    "webpack": "^5.23.X",
+    "webpack-cli": "^4.5.X"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "./node_modules/typescript/bin/tsc && webpack"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/oscarhilton/projectx.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/oscarhilton/projectx/issues"
+  },
+  "homepage": "https://github.com/oscarhilton/projectx#readme"
+}
