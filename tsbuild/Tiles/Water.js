@@ -19,10 +19,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var Tile_1 = __importDefault(require("./Tile"));
+var LoadTexture_1 = __importDefault(require("../textures/LoadTexture"));
 var Water = /** @class */ (function (_super) {
     __extends(Water, _super);
     function Water(x, y, z) {
-        return _super.call(this, true, 0x80DAEB, x, y, z) || this;
+        return _super.call(this, true, 0x80DAEB, x, y, z, LoadTexture_1.default("textures/sea.png")) || this;
     }
     return Water;
 }(Tile_1.default));

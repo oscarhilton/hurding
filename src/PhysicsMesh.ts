@@ -14,6 +14,12 @@ export default class PhysicsMesh {
     this.mesh = null;
   }
 
+  setup() {
+    if (this.body) {
+      this.body.addEventListener("collide", this.hanldeCollisions.bind(this));
+    }
+  }
+
   update() {
     this.mesh.position.x = this.body.position.x;
     this.mesh.position.y = this.body.position.y;
@@ -22,9 +28,10 @@ export default class PhysicsMesh {
     this.mesh.quaternion.y = this.body.quaternion.y;
     this.mesh.quaternion.z = this.body.quaternion.z;
     this.mesh.quaternion.w = this.body.quaternion.w;
+    return;
   }
 
-  run() {
-    this.update();
+  hanldeCollisions() {
+    // Handle collisions here
   }
 }

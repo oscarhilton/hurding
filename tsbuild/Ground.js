@@ -6,29 +6,29 @@ var Ground = /** @class */ (function () {
     function Ground(world, scene) {
         // Physics constructor
         this.world = world;
-        this.body = new cannon_1.Body({
+        this.BODY = new cannon_1.Body({
             mass: 0,
             type: cannon_1.Body.KINEMATIC,
             position: new cannon_1.Vec3(0, 0, 0),
         });
-        this.shape = new cannon_1.Plane();
+        this.SHAPE = new cannon_1.Plane();
         // Geometry constructor
         this.scene = scene;
-        this.geometry = new three_1.PlaneGeometry(100, 100, 32);
-        this.material = new three_1.MeshToonMaterial({ color: 0xffff00, side: three_1.DoubleSide });
-        this.mesh = new three_1.Mesh(this.geometry, this.material);
+        this.GEOMETRY = new three_1.PlaneGeometry(100, 100, 32);
+        this.MATERIAL = new three_1.MeshToonMaterial({ color: 0xffff00, side: three_1.DoubleSide });
+        this.MESH = new three_1.Mesh(this.GEOMETRY, this.MATERIAL);
     }
     Ground.prototype.setup = function () {
-        this.body.addShape(this.shape);
-        this.world.addBody(this.body);
-        this.scene.add(this.mesh);
-        this.mesh.position.x = this.body.position.x;
-        this.mesh.position.y = this.body.position.y;
-        this.mesh.position.z = this.body.position.z;
-        this.mesh.quaternion.x = this.body.quaternion.x;
-        this.mesh.quaternion.y = this.body.quaternion.y;
-        this.mesh.quaternion.z = this.body.quaternion.z;
-        this.mesh.quaternion.w = this.body.quaternion.w;
+        this.BODY.addShape(this.SHAPE);
+        this.world.addBody(this.BODY);
+        this.scene.add(this.MESH);
+        this.MESH.position.x = this.BODY.position.x;
+        this.MESH.position.y = this.BODY.position.y;
+        this.MESH.position.z = this.BODY.position.z;
+        this.MESH.quaternion.x = this.BODY.quaternion.x;
+        this.MESH.quaternion.y = this.BODY.quaternion.y;
+        this.MESH.quaternion.z = this.BODY.quaternion.z;
+        this.MESH.quaternion.w = this.BODY.quaternion.w;
     };
     return Ground;
 }());

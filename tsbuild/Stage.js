@@ -11,7 +11,9 @@ var Levels_1 = __importDefault(require("./Levels"));
 var Tile_1 = require("./Tiles/Tile");
 var Water_1 = __importDefault(require("./Tiles/Water"));
 var Floor_1 = __importDefault(require("./Tiles/Floor"));
-console.log(Levels_1.default);
+var Rock_1 = __importDefault(require("./Tiles/Rock"));
+var Bridge_1 = __importDefault(require("./Tiles/Bridge"));
+var Flock_1 = __importDefault(require("./Flock"));
 var GRAVITY = -9.82; // real world gravity;
 var Stage = /** @class */ (function () {
     function Stage() {
@@ -21,13 +23,12 @@ var Stage = /** @class */ (function () {
         this.world = new cannon_1.World();
         // Set the ducks array
         this.ducks = [];
-        // Add the ground
-        // this.ground = new Ground(this.world, this.three.scene);
+        this.flock = null;
         // Set up time vars
         this.fixedTimeStep = 1.0 / 60.0; // seconds
         this.maxSubSteps = 3;
         // Number of starting ducks
-        this.totalDucks = 50;
+        this.totalDucks = 2;
         // Clock
         this.clock = 0;
         // Levels
@@ -35,8 +36,8 @@ var Stage = /** @class */ (function () {
         this.levelTiles = [];
         // Handle THREE setup
         this.setupThree();
-        // Handle game setup
-        this.setupGame();
+        // Set up level;
+        this.setupCurrentLevel();
     }
     Stage.prototype.setupThree = function () {
         console.log("SETTING UP THREE");
@@ -46,29 +47,50 @@ var Stage = /** @class */ (function () {
         console.log("SETTING UP GAME");
         // Set the gravity
         this.world.gravity.set(0, 0, GRAVITY);
-        // Set the ground
-        // this.ground.setup();
-        // Load level
-        this.setupCurrentLevel();
+        // Set up all the ducks
+        for (var _i = 0, _a = this.ducks; _i < _a.length; _i++) {
+            var duck = _a[_i];
+            duck.setup();
+        }
         // Run the loop
         this.loop();
     };
     Stage.prototype.setupCurrentLevel = function () {
+        var cameraPosition = null;
         var level = Levels_1.default[this.currentLevelIndex];
         // run Z axis loop
-        for (var z = 0; z < level.segmentsZ.length; z += Tile_1.SIZE) {
+        for (var z = 0; z < level.segmentsZ.length; z++) {
             var currentZ = level.segmentsZ[z];
             // run Y axis loop
-            for (var y = 0; y < currentZ.rows.length; y += Tile_1.SIZE) {
+            for (var y = 0; y < currentZ.rows.length; y++) {
                 var currentY = currentZ.rows[y];
                 // run X axis loop
-                for (var x = 0; x < currentY.length; x += Tile_1.SIZE) {
+                for (var x = 0; x < currentY.length; x++) {
                     switch (currentY[x]) {
                         case tiles_1.default.water:
                             this.levelTiles.push(new Water_1.default(x, y, z));
                             break;
+                        case tiles_1.default.spawn:
+                            // Update camera position variable
+                            cameraPosition = { x: x * Tile_1.SIZE, y: y * Tile_1.SIZE };
+                            // Add the ducks
+                            if (this.totalDucks > 0) {
+                                var columnDucks = 5 % this.totalDucks;
+                                for (var col = 0; col < columnDucks; col++) {
+                                    for (var row = 0; row < this.totalDucks / columnDucks; row++) {
+                                        this.ducks.push(new Duck_1.default(this.world, this.three.scene, row * 1.1 + x * Tile_1.SIZE, col * 1.1 + y * Tile_1.SIZE));
+                                    }
+                                }
+                                this.flock = new Flock_1.default(this.ducks);
+                            }
                         case tiles_1.default.floor:
                             this.levelTiles.push(new Floor_1.default(x, y, z));
+                            break;
+                        case tiles_1.default.rock:
+                            this.levelTiles.push(new Rock_1.default(x, y, z));
+                            break;
+                        case tiles_1.default.bridge:
+                            this.levelTiles.push(new Bridge_1.default(x, y, z));
                             break;
                         default:
                             break;
@@ -76,20 +98,16 @@ var Stage = /** @class */ (function () {
                 }
             }
         }
+        if (cameraPosition) {
+            this.three.updateCamera(cameraPosition);
+        }
         // Display level tiles
         for (var _i = 0, _a = this.levelTiles; _i < _a.length; _i++) {
             var tile = _a[_i];
             tile.setup(this.world, this.three.scene);
         }
-        // Add the ducks
-        if (this.totalDucks > 0) {
-            var columnDucks = 5 % this.totalDucks;
-            for (var col = 0; col < columnDucks; col++) {
-                for (var row = 0; row < this.totalDucks / columnDucks; row++) {
-                    this.ducks.push(new Duck_1.default(this.world, this.three.scene, row, col));
-                }
-            }
-        }
+        // Set the game
+        this.setupGame();
     };
     Stage.prototype.simulationLoop = function (time) {
         var dt = (time - this.clock) / 1000;
@@ -97,19 +115,23 @@ var Stage = /** @class */ (function () {
         return this.clock = time;
     };
     Stage.prototype.updateGameObjects = function () {
+        if (this.flock !== null) {
+            this.flock.update();
+        }
         for (var _i = 0, _a = this.ducks; _i < _a.length; _i++) {
             var duck = _a[_i];
             duck.update();
         }
+        return;
     };
     Stage.prototype.renderLoop = function () {
-        this.three.handleRender();
+        return this.three.handleRender();
     };
     Stage.prototype.loop = function () {
-        this.simulationLoop(0);
-        this.renderLoop();
-        this.updateGameObjects();
         requestAnimationFrame(this.loop.bind(this));
+        this.simulationLoop(0);
+        this.updateGameObjects();
+        this.renderLoop();
     };
     return Stage;
 }());

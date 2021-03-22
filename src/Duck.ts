@@ -1,4 +1,4 @@
-import { Scene, BoxGeometry, MeshToonMaterial, Mesh } from "three";
+import { Scene, BoxGeometry, MeshPhongMaterial, Mesh } from "three";
 import { World, Box, Body, Vec3 } from "cannon";
 import PhysicsMesh from "./PhysicsMesh";
 
@@ -7,12 +7,11 @@ const DEFAULT_MASS = 5;
 
 export default class Duck extends PhysicsMesh {
   isAlive: boolean;
-  size: number;
   halfExtents: Vec3;
   shape: Box;
   body: Body;
   geometry: BoxGeometry;
-  material: MeshToonMaterial;
+  material: MeshPhongMaterial;
   mesh: Mesh;
 
   constructor(world: World, scene: Scene, x: number, y: number) {
@@ -20,26 +19,40 @@ export default class Duck extends PhysicsMesh {
     // Charactoristics constructor
     this.isAlive = true;
     // Physics constructor
-    this.size = DEFAULT_SIZE;
-    this.halfExtents = new Vec3(this.size / 2, this.size / 2, this.size / 2);
+    this.halfExtents = new Vec3(DEFAULT_SIZE / 2, DEFAULT_SIZE / 2, DEFAULT_SIZE / 2);
     this.shape = new Box(this.halfExtents);
     this.body = new Body({
       mass: DEFAULT_MASS,
-      position: new Vec3( x, y, 10 ),
+      position: new Vec3( x * DEFAULT_SIZE, y * DEFAULT_SIZE, 30 ),
     });
 
     // Geometry constructor
     this.geometry = new BoxGeometry( DEFAULT_SIZE, DEFAULT_SIZE, DEFAULT_SIZE);
-    this.material = new MeshToonMaterial( { color: 0xFF8000 } );
+    this.material = new MeshPhongMaterial( { color: 0xFF8000 } );
     this.mesh = new Mesh( this.geometry, this.material );
-    this.setup();
+    this.mesh.castShadow = true;
   }
 
   setup() {
     this.body.addShape(this.shape);
     this.world.addBody(this.body);
     this.scene.add(this.mesh);
-    super.run();
+    super.setup();
+    return;
+  }
+
+  update() {
+    super.update();
+
+    if (this.isAlive) {
+      // this.body.velocity.x = 0;
+      // this.body.velocity.y = 0;
+      // this.body.velocity.x = (this.body.velocity.x + Math.random() * 2.5) * (Math.round(Math.random()) * 2 - 1);
+      // this.body.velocity.y = (this.body.velocity.y + Math.random() * 2.5) * (Math.round(Math.random()) * 2 - 1);
+    } else {
+      console.log("duck is dead");
+    }
+    return;
   }
 
   kill() {

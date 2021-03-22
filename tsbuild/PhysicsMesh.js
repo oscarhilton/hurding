@@ -7,6 +7,11 @@ var PhysicsMesh = /** @class */ (function () {
         this.body = null;
         this.mesh = null;
     }
+    PhysicsMesh.prototype.setup = function () {
+        if (this.body) {
+            this.body.addEventListener("collide", this.hanldeCollisions.bind(this));
+        }
+    };
     PhysicsMesh.prototype.update = function () {
         this.mesh.position.x = this.body.position.x;
         this.mesh.position.y = this.body.position.y;
@@ -15,9 +20,10 @@ var PhysicsMesh = /** @class */ (function () {
         this.mesh.quaternion.y = this.body.quaternion.y;
         this.mesh.quaternion.z = this.body.quaternion.z;
         this.mesh.quaternion.w = this.body.quaternion.w;
+        return;
     };
-    PhysicsMesh.prototype.run = function () {
-        this.update();
+    PhysicsMesh.prototype.hanldeCollisions = function () {
+        // Handle collisions here
     };
     return PhysicsMesh;
 }());

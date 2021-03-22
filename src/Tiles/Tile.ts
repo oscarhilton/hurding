@@ -1,7 +1,7 @@
-import { Scene, BoxGeometry, MeshToonMaterial, Mesh } from "three";
+import { Scene, BoxGeometry, MeshPhongMaterial, Mesh } from "three";
 import { World, Box, Body, Vec3 } from "cannon";
 
-export const SIZE = 2;
+export const SIZE = 10;
 
 export default class Tile {
   killsDucks: boolean;
@@ -9,11 +9,11 @@ export default class Tile {
   shape: Box;
   body: Body;
   geometry: BoxGeometry;
-  material: MeshToonMaterial;
+  material: MeshPhongMaterial;
   mesh: Mesh;
   colour: any;
 
-  constructor(killsDucks: boolean, colour: any, x: number, y: number, z: number) {
+  constructor(killsDucks: boolean, colour: any, x: number, y: number, z: number, texture?: any,) {
     this.killsDucks = killsDucks;
 
     // Physics constructor
@@ -21,14 +21,15 @@ export default class Tile {
     this.shape = new Box(this.halfExtents);
     this.body = new Body({
       mass: 0,
-      position: new Vec3( x, y, z ),
+      position: new Vec3( x * SIZE, y * SIZE, z * SIZE),
     });
 
     // Geometry constructor
-    this.geometry = new BoxGeometry( SIZE, SIZE, SIZE );
-    this.material = new MeshToonMaterial( { color: colour } );
+    this.geometry = new BoxGeometry( SIZE, SIZE, SIZE);
+    this.material = new MeshPhongMaterial( { color: colour, map: texture } );
     this.mesh = new Mesh( this.geometry, this.material );
-    this.mesh.position.set(x, y, z);
+    this.mesh.castShadow = true;
+    this.mesh.position.set(x * SIZE, y * SIZE, z * SIZE);
   }
 
   setup(world: World, scene: Scene) {

@@ -6,11 +6,10 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.Segment = void 0;
 var tiles_1 = __importDefault(require("./tiles"));
 var Segment = /** @class */ (function () {
-    // col: number[];
     function Segment(map) {
         this.rows = map.split(',').map(function (row) {
             return row.split('').filter(function (character) { return Object.values(tiles_1.default).includes(character); });
-        }).filter(function (array) { return array.length > 0; });
+        }).filter(function (array) { return array.length > 0; }).reverse();
     }
     return Segment;
 }());

@@ -27,26 +27,44 @@ var Duck = /** @class */ (function (_super) {
     __extends(Duck, _super);
     function Duck(world, scene, x, y) {
         var _this = _super.call(this, world, scene) || this;
+        // Charactoristics constructor
+        _this.isAlive = true;
         // Physics constructor
-        _this.size = DEFAULT_SIZE;
-        _this.halfExtents = new cannon_1.Vec3(_this.size / 2, _this.size / 2, _this.size / 2);
+        _this.halfExtents = new cannon_1.Vec3(DEFAULT_SIZE / 2, DEFAULT_SIZE / 2, DEFAULT_SIZE / 2);
         _this.shape = new cannon_1.Box(_this.halfExtents);
         _this.body = new cannon_1.Body({
             mass: DEFAULT_MASS,
-            position: new cannon_1.Vec3(x, y, 10),
+            position: new cannon_1.Vec3(x * DEFAULT_SIZE, y * DEFAULT_SIZE, 30),
         });
         // Geometry constructor
         _this.geometry = new three_1.BoxGeometry(DEFAULT_SIZE, DEFAULT_SIZE, DEFAULT_SIZE);
-        _this.material = new three_1.MeshToonMaterial({ color: 0xFF8000 });
+        _this.material = new three_1.MeshPhongMaterial({ color: 0xFF8000 });
         _this.mesh = new three_1.Mesh(_this.geometry, _this.material);
-        _this.setup();
+        _this.mesh.castShadow = true;
         return _this;
     }
     Duck.prototype.setup = function () {
         this.body.addShape(this.shape);
         this.world.addBody(this.body);
         this.scene.add(this.mesh);
-        _super.prototype.run.call(this);
+        _super.prototype.setup.call(this);
+        return;
+    };
+    Duck.prototype.update = function () {
+        _super.prototype.update.call(this);
+        if (this.isAlive) {
+            // this.body.velocity.x = 0;
+            // this.body.velocity.y = 0;
+            // this.body.velocity.x = (this.body.velocity.x + Math.random() * 2.5) * (Math.round(Math.random()) * 2 - 1);
+            // this.body.velocity.y = (this.body.velocity.y + Math.random() * 2.5) * (Math.round(Math.random()) * 2 - 1);
+        }
+        else {
+            console.log("duck is dead");
+        }
+        return;
+    };
+    Duck.prototype.kill = function () {
+        return this.isAlive = false;
     };
     return Duck;
 }(PhysicsMesh_1.default));

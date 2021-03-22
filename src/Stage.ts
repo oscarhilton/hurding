@@ -1,6 +1,5 @@
 import { World } from "cannon";
 import Duck from "./Duck";
-import Ground from "./Ground";
 import ThreeInstance from "./ThreeInstance";
 import TheeInstance from "./ThreeInstance";
 import TILES from './tiles';
@@ -8,11 +7,11 @@ import Levels from "./Levels";
 import Tile, { SIZE as TILE_SIZE }  from "./Tiles/Tile";
 import Water from "./Tiles/Water";
 import Floor from "./Tiles/Floor";
-
-console.log(Levels);
+import Rock from "./Tiles/Rock";
+import Bridge from "./Tiles/Bridge";
+import Flock from "./Flock";
 
 const GRAVITY = -9.82 // real world gravity;
-
 export default class Stage {
   three: ThreeInstance;
   ctx: any;
@@ -25,6 +24,7 @@ export default class Stage {
   clock: number;
   currentLevelIndex: number;
   levelTiles: Tile[];
+  flock: Flock | null;
 
   constructor() {
     // Set up THREE
@@ -33,13 +33,12 @@ export default class Stage {
     this.world = new World();
     // Set the ducks array
     this.ducks = [];
-    // Add the ground
-    // this.ground = new Ground(this.world, this.three.scene);
+    this.flock = null;
     // Set up time vars
     this.fixedTimeStep = 1.0 / 60.0; // seconds
     this.maxSubSteps = 3;
     // Number of starting ducks
-    this.totalDucks = 50;
+    this.totalDucks = 2;
     // Clock
     this.clock = 0;
 
@@ -49,8 +48,8 @@ export default class Stage {
   
     // Handle THREE setup
     this.setupThree();
-    // Handle game setup
-    this.setupGame();
+    // Set up level;
+    this.setupCurrentLevel();
   }
 
   setupThree() {
@@ -62,31 +61,51 @@ export default class Stage {
     console.log("SETTING UP GAME");
     // Set the gravity
     this.world.gravity.set(0, 0, GRAVITY);
-    // Set the ground
-    // this.ground.setup();
-    // Load level
-    this.setupCurrentLevel();
+    // Set up all the ducks
+    for (var duck of this.ducks) {
+      duck.setup();
+    }
     // Run the loop
     this.loop();
   }
 
   setupCurrentLevel() {
+    let cameraPosition = null;
     const level = Levels[this.currentLevelIndex];
     
     // run Z axis loop
-    for (var z = 0; z < level.segmentsZ.length; z += TILE_SIZE) {
+    for (var z = 0; z < level.segmentsZ.length; z++) {
       const currentZ = level.segmentsZ[z];
       // run Y axis loop
-      for (var y = 0; y < currentZ.rows.length; y += TILE_SIZE) {
+      for (var y = 0; y < currentZ.rows.length; y++) {
         const currentY = currentZ.rows[y];
         // run X axis loop
-        for (var x = 0; x < currentY.length; x += TILE_SIZE) {
+        for (var x = 0; x < currentY.length; x++) {          
           switch(currentY[x]) {
             case TILES.water:
               this.levelTiles.push(new Water(x, y, z));
               break;
+            case TILES.spawn:
+              // Update camera position variable
+              cameraPosition = { x: x * TILE_SIZE, y: y * TILE_SIZE };
+              // Add the ducks
+              if (this.totalDucks > 0) {
+                const columnDucks = 5 % this.totalDucks;
+                for (var col = 0; col < columnDucks; col++) {
+                  for (var row = 0; row < this.totalDucks / columnDucks; row++) {
+                    this.ducks.push(new Duck(this.world, this.three.scene, row * 1.1 + x * TILE_SIZE, col * 1.1 + y * TILE_SIZE));
+                  }
+                }
+                this.flock = new Flock(this.ducks);
+              }
             case TILES.floor:
               this.levelTiles.push(new Floor(x, y, z));
+              break;
+            case TILES.rock:
+              this.levelTiles.push(new Rock(x, y, z));
+              break;
+            case TILES.bridge:
+              this.levelTiles.push(new Bridge(x, y, z));
               break;
             default:
               break;
@@ -95,20 +114,17 @@ export default class Stage {
       }
     }
 
+    if (cameraPosition) {
+      this.three.updateCamera(cameraPosition);
+    }
+
     // Display level tiles
     for (var tile of this.levelTiles) {
       tile.setup(this.world, this.three.scene);
     }
 
-    // Add the ducks
-    if (this.totalDucks > 0) {
-      const columnDucks = 5 % this.totalDucks;
-      for (var col = 0; col < columnDucks; col++) {
-        for (var row = 0; row < this.totalDucks / columnDucks; row++) {
-          this.ducks.push(new Duck(this.world, this.three.scene, row, col));
-        }
-      }
-    }
+    // Set the game
+    this.setupGame();
   }
 
   simulationLoop(time: number) {
@@ -118,19 +134,23 @@ export default class Stage {
   }
 
   updateGameObjects() {
+    if (this.flock !== null) {
+      this.flock.update();
+    }
     for (var duck of this.ducks) {
       duck.update();
     }
+    return;
   }
 
   renderLoop() {
-    this.three.handleRender();
+    return this.three.handleRender();
   }
 
   loop() {
-    this.simulationLoop(0);
-    this.renderLoop();
-    this.updateGameObjects();
     requestAnimationFrame(this.loop.bind(this));
+    this.simulationLoop(0);
+    this.updateGameObjects();
+    this.renderLoop();
   }
 }

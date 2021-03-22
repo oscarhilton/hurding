@@ -4,40 +4,40 @@ import { PlaneGeometry, MeshToonMaterial, DoubleSide, Mesh, Scene } from "three"
 export default class Ground {
   world: World;
   scene: Scene;
-  body: Body;
-  shape: Plane;
-  geometry: PlaneGeometry;
-  material: MeshToonMaterial;
-  mesh: Mesh;
+  BODY: Body;
+  SHAPE: Plane;
+  GEOMETRY: PlaneGeometry;
+  MATERIAL: MeshToonMaterial;
+  MESH: Mesh;
 
   constructor(world: World, scene: Scene) {
     // Physics constructor
     this.world = world;
-    this.body = new Body({
+    this.BODY = new Body({
       mass: 0, // Static body
       type: Body.KINEMATIC,
       position: new Vec3(0, 0, 0),
     });
-    this.shape = new Plane();
+    this.SHAPE = new Plane();
 
     // Geometry constructor
     this.scene = scene;
-    this.geometry = new PlaneGeometry( 100, 100, 32 );
-    this.material = new MeshToonMaterial({ color: 0xffff00, side: DoubleSide });
-    this.mesh = new Mesh(this.geometry, this.material);
+    this.GEOMETRY = new PlaneGeometry( 100, 100, 32 );
+    this.MATERIAL = new MeshToonMaterial({ color: 0xffff00, side: DoubleSide });
+    this.MESH = new Mesh(this.GEOMETRY, this.MATERIAL);
   }
 
   setup() {
-    this.body.addShape(this.shape);
-    this.world.addBody(this.body);
-    this.scene.add(this.mesh);
+    this.BODY.addShape(this.SHAPE);
+    this.world.addBody(this.BODY);
+    this.scene.add(this.MESH);
 
-    this.mesh.position.x = this.body.position.x;
-    this.mesh.position.y = this.body.position.y;
-    this.mesh.position.z = this.body.position.z;
-    this.mesh.quaternion.x = this.body.quaternion.x;
-    this.mesh.quaternion.y = this.body.quaternion.y;
-    this.mesh.quaternion.z = this.body.quaternion.z;
-    this.mesh.quaternion.w = this.body.quaternion.w;
+    this.MESH.position.x = this.BODY.position.x;
+    this.MESH.position.y = this.BODY.position.y;
+    this.MESH.position.z = this.BODY.position.z;
+    this.MESH.quaternion.x = this.BODY.quaternion.x;
+    this.MESH.quaternion.y = this.BODY.quaternion.y;
+    this.MESH.quaternion.z = this.BODY.quaternion.z;
+    this.MESH.quaternion.w = this.BODY.quaternion.w;
   }
 }
