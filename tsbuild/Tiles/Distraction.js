@@ -18,20 +18,12 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var OBJLoader_js_1 = require("three/examples/jsm/loaders/OBJLoader.js");
 var Tile_1 = __importDefault(require("./Tile"));
-var Bridge = /** @class */ (function (_super) {
-    __extends(Bridge, _super);
-    function Bridge(x, y, z) {
-        var _this = _super.call(this, false, 0xD2691E, x, y, z, null) || this;
-        var loader = new OBJLoader_js_1.OBJLoader();
-        loader.load("objects/logs.obj", function (root) { return _this.object = root; });
-        return _this;
+var Distraction = /** @class */ (function (_super) {
+    __extends(Distraction, _super);
+    function Distraction(x, y, z) {
+        return _super.call(this, false, 0xFF6347, x, y, z) || this;
     }
-    Bridge.prototype.setup = function (world, scene) {
-        _super.prototype.setup.call(this, world, scene);
-        scene.add(this.mesh);
-    };
-    return Bridge;
+    return Distraction;
 }(Tile_1.default));
-exports.default = Bridge;
+exports.default = Distraction;

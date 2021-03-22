@@ -9,7 +9,9 @@ import Water from "./Tiles/Water";
 import Floor from "./Tiles/Floor";
 import Rock from "./Tiles/Rock";
 import Bridge from "./Tiles/Bridge";
+import Distraction from "./Tiles/Distraction";
 import Flock from "./Flock";
+import DistractionRadius from "./DistractionRadius";
 
 const GRAVITY = -9.82 // real world gravity;
 export default class Stage {
@@ -25,6 +27,7 @@ export default class Stage {
   currentLevelIndex: number;
   levelTiles: Tile[];
   flock: Flock | null;
+  distractions: DistractionRadius[];
 
   constructor() {
     // Set up THREE
@@ -36,7 +39,7 @@ export default class Stage {
     this.flock = null;
     // Set up time vars
     this.fixedTimeStep = 1.0 / 60.0; // seconds
-    this.maxSubSteps = 3;
+    this.maxSubSteps = 10;
     // Number of starting ducks
     this.totalDucks = 100;
     // Clock
@@ -45,6 +48,7 @@ export default class Stage {
     // Levels
     this.currentLevelIndex = 0;
     this.levelTiles = [];
+    this.distractions = [];
   
     // Handle THREE setup
     this.setupThree();
@@ -103,9 +107,14 @@ export default class Stage {
               break;
             case TILES.rock:
               this.levelTiles.push(new Rock(x, y, z));
+              this.distractions.push(new DistractionRadius(this.ducks, x * TILE_SIZE, y * TILE_SIZE, z * TILE_SIZE, false, 0.1, 0.1));
               break;
             case TILES.bridge:
               this.levelTiles.push(new Bridge(x, y, z));
+              break;
+            case TILES.distraction:
+              this.levelTiles.push(new Distraction(x, y, z));
+              this.distractions.push(new DistractionRadius(this.ducks, x * TILE_SIZE, y * TILE_SIZE, z * TILE_SIZE, true));
               break;
             default:
               break;
@@ -134,6 +143,11 @@ export default class Stage {
   }
 
   updateGameObjects() {
+    if (this.distractions.length > 0) {
+      for (const distraction of this.distractions) {
+        distraction.update()
+      }
+    }
     if (this.flock !== null) {
       this.flock.update();
     }

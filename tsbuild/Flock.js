@@ -1,14 +1,13 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var cannon_1 = require("cannon");
-var AGENT_SPEED = 10;
+var AGENT_SPEED = 300;
 var DISTANCE_FROM_NEIGHBOUR = 2;
 var Flock = /** @class */ (function () {
     function Flock(flockBodies) {
         this.flockBodies = flockBodies;
     }
     Flock.prototype.update = function () {
-        console.log("UPDATING FLOCK");
         for (var _i = 0, _a = this.flockBodies; _i < _a.length; _i++) {
             var myAgent = _a[_i];
             var alignment = this.computeAlignment(myAgent);

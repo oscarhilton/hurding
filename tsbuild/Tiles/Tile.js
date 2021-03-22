@@ -3,7 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.SIZE = void 0;
 var three_1 = require("three");
 var cannon_1 = require("cannon");
-exports.SIZE = 10;
+exports.SIZE = 8;
 var Tile = /** @class */ (function () {
     function Tile(killsDucks, colour, x, y, z, texture) {
         this.killsDucks = killsDucks;

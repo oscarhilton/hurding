@@ -1,7 +1,7 @@
 import PhysicsMesh from "./PhysicsMesh";
 import { Vec3 } from "cannon";
 
-const AGENT_SPEED = 10;
+const AGENT_SPEED = 300;
 const DISTANCE_FROM_NEIGHBOUR = 2;
 export default class Flock {
   flockBodies: PhysicsMesh[];
@@ -11,7 +11,6 @@ export default class Flock {
   }
 
   update() {
-    console.log("UPDATING FLOCK");
     for (var myAgent of this.flockBodies) {
       const alignment = this.computeAlignment(myAgent);
       const cohesion = this.computeCohesion(myAgent);
@@ -27,7 +26,7 @@ export default class Flock {
   }
 
   // Alignment is a behavior that causes a particular agent to line up with agents close by.
-  computeAlignment(myAgent: PhysicsMesh) {
+  computeAlignment(myAgent: PhysicsMesh): Vec3 {
     let point = new Vec3();
     let neighbors = 0;
     for( var agent of this.flockBodies) {
@@ -51,7 +50,7 @@ export default class Flock {
   }
 
   // Cohesion is a behavior that causes agents to steer towards the "center of mass"
-  computeCohesion(myAgent: PhysicsMesh) {
+  computeCohesion(myAgent: PhysicsMesh): Vec3 {
     let point = new Vec3();
     let neighbors = 0;
     for( var agent of this.flockBodies) {
@@ -76,7 +75,7 @@ export default class Flock {
   }
 
   // Separation is the behavior that causes an agent to steer away from all of its neighbors.
-  computeSeparation(myAgent: PhysicsMesh) {
+  computeSeparation(myAgent: PhysicsMesh): Vec3{
     let point = new Vec3();
     let neighbors = 0;
     for( var agent of this.flockBodies) {

@@ -9,7 +9,7 @@ var PhysicsMesh = /** @class */ (function () {
     }
     PhysicsMesh.prototype.setup = function () {
         if (this.body) {
-            this.body.addEventListener("collide", this.hanldeCollisions.bind(this));
+            this.body.addEventListener("collide", this.handleCollisions.bind(this));
         }
     };
     PhysicsMesh.prototype.update = function () {
@@ -22,7 +22,7 @@ var PhysicsMesh = /** @class */ (function () {
         this.mesh.quaternion.w = this.body.quaternion.w;
         return;
     };
-    PhysicsMesh.prototype.hanldeCollisions = function () {
+    PhysicsMesh.prototype.handleCollisions = function () {
         // Handle collisions here
     };
     return PhysicsMesh;

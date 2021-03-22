@@ -1,7 +1,7 @@
 import { Scene, BoxGeometry, MeshPhongMaterial, Mesh } from "three";
 import { World, Box, Body, Vec3 } from "cannon";
 
-export const SIZE = 10;
+export const SIZE = 8;
 
 export default class Tile {
   killsDucks: boolean;

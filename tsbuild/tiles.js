@@ -6,5 +6,6 @@ exports.default = {
     floor: "F",
     rock: "O",
     bridge: "=",
+    distraction: "D",
     spawn: "@"
 };

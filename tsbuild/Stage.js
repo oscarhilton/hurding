@@ -13,7 +13,9 @@ var Water_1 = __importDefault(require("./Tiles/Water"));
 var Floor_1 = __importDefault(require("./Tiles/Floor"));
 var Rock_1 = __importDefault(require("./Tiles/Rock"));
 var Bridge_1 = __importDefault(require("./Tiles/Bridge"));
+var Distraction_1 = __importDefault(require("./Tiles/Distraction"));
 var Flock_1 = __importDefault(require("./Flock"));
+var DistractionRadius_1 = __importDefault(require("./DistractionRadius"));
 var GRAVITY = -9.82; // real world gravity;
 var Stage = /** @class */ (function () {
     function Stage() {
@@ -26,7 +28,7 @@ var Stage = /** @class */ (function () {
         this.flock = null;
         // Set up time vars
         this.fixedTimeStep = 1.0 / 60.0; // seconds
-        this.maxSubSteps = 3;
+        this.maxSubSteps = 10;
         // Number of starting ducks
         this.totalDucks = 100;
         // Clock
@@ -34,6 +36,7 @@ var Stage = /** @class */ (function () {
         // Levels
         this.currentLevelIndex = 0;
         this.levelTiles = [];
+        this.distractions = [];
         // Handle THREE setup
         this.setupThree();
         // Set up level;
@@ -88,9 +91,14 @@ var Stage = /** @class */ (function () {
                             break;
                         case tiles_1.default.rock:
                             this.levelTiles.push(new Rock_1.default(x, y, z));
+                            this.distractions.push(new DistractionRadius_1.default(this.ducks, x * Tile_1.SIZE, y * Tile_1.SIZE, z * Tile_1.SIZE, false, 0.1, 0.1));
                             break;
                         case tiles_1.default.bridge:
                             this.levelTiles.push(new Bridge_1.default(x, y, z));
+                            break;
+                        case tiles_1.default.distraction:
+                            this.levelTiles.push(new Distraction_1.default(x, y, z));
+                            this.distractions.push(new DistractionRadius_1.default(this.ducks, x * Tile_1.SIZE, y * Tile_1.SIZE, z * Tile_1.SIZE, true));
                             break;
                         default:
                             break;
@@ -115,11 +123,17 @@ var Stage = /** @class */ (function () {
         return this.clock = time;
     };
     Stage.prototype.updateGameObjects = function () {
+        if (this.distractions.length > 0) {
+            for (var _i = 0, _a = this.distractions; _i < _a.length; _i++) {
+                var distraction = _a[_i];
+                distraction.update();
+            }
+        }
         if (this.flock !== null) {
             this.flock.update();
         }
-        for (var _i = 0, _a = this.ducks; _i < _a.length; _i++) {
-            var duck = _a[_i];
+        for (var _b = 0, _c = this.ducks; _b < _c.length; _b++) {
+            var duck = _c[_b];
             duck.update();
         }
         return;
