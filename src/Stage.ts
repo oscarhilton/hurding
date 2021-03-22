@@ -38,7 +38,7 @@ export default class Stage {
     this.fixedTimeStep = 1.0 / 60.0; // seconds
     this.maxSubSteps = 3;
     // Number of starting ducks
-    this.totalDucks = 2;
+    this.totalDucks = 100;
     // Clock
     this.clock = 0;
 
@@ -90,7 +90,7 @@ export default class Stage {
               cameraPosition = { x: x * TILE_SIZE, y: y * TILE_SIZE };
               // Add the ducks
               if (this.totalDucks > 0) {
-                const columnDucks = 5 % this.totalDucks;
+                const columnDucks = 10 % this.totalDucks;
                 for (var col = 0; col < columnDucks; col++) {
                   for (var row = 0; row < this.totalDucks / columnDucks; row++) {
                     this.ducks.push(new Duck(this.world, this.three.scene, row * 1.1 + x * TILE_SIZE, col * 1.1 + y * TILE_SIZE));

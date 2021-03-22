@@ -28,7 +28,7 @@ var Stage = /** @class */ (function () {
         this.fixedTimeStep = 1.0 / 60.0; // seconds
         this.maxSubSteps = 3;
         // Number of starting ducks
-        this.totalDucks = 2;
+        this.totalDucks = 100;
         // Clock
         this.clock = 0;
         // Levels
@@ -75,7 +75,7 @@ var Stage = /** @class */ (function () {
                             cameraPosition = { x: x * Tile_1.SIZE, y: y * Tile_1.SIZE };
                             // Add the ducks
                             if (this.totalDucks > 0) {
-                                var columnDucks = 5 % this.totalDucks;
+                                var columnDucks = 10 % this.totalDucks;
                                 for (var col = 0; col < columnDucks; col++) {
                                     for (var row = 0; row < this.totalDucks / columnDucks; row++) {
                                         this.ducks.push(new Duck_1.default(this.world, this.three.scene, row * 1.1 + x * Tile_1.SIZE, col * 1.1 + y * Tile_1.SIZE));

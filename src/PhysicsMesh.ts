@@ -16,7 +16,7 @@ export default class PhysicsMesh {
 
   setup() {
     if (this.body) {
-      this.body.addEventListener("collide", this.hanldeCollisions.bind(this));
+      this.body.addEventListener("collide", this.handleCollisions.bind(this));
     }
   }
 
@@ -31,7 +31,7 @@ export default class PhysicsMesh {
     return;
   }
 
-  hanldeCollisions() {
+  handleCollisions() {
     // Handle collisions here
   }
 }
