@@ -25,8 +25,6 @@ export default class DestractionRadius {
       const distractionInstance = this;
       const distractionAmount = distractionInstance.computeDistractionAmount(myAgent);
 
-      console.log(distractionAmount);
-
       myAgent.body.velocity.x = distractionAmount.x;
       myAgent.body.velocity.y = distractionAmount.y;
       const oldZ = myAgent.body.velocity.z;

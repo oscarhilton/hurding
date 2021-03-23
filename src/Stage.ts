@@ -12,6 +12,7 @@ import Bridge from "./Tiles/Bridge";
 import Distraction from "./Tiles/Distraction";
 import Flock from "./Flock";
 import DistractionRadius from "./DistractionRadius";
+import Level, { Segment } from "./Level";
 
 const GRAVITY = -9.82 // real world gravity;
 export default class Stage {
@@ -73,6 +74,39 @@ export default class Stage {
     this.loop();
   }
 
+  returnNeighbouringTiles(xPosition: number, yPosition: number, zPosition: number, currentLevelTiles: Level) {
+    // For Z, Z + 1 & Z - 1:
+    // [x - 1 & y + 1] [ x & y + 1 ] [+ x + 1 & y + 1]
+    // [x - 1 & y    ] [   TILE!   ] [+ x + 1 & y    ]
+    // [x - 1 & y - 1] [ x & y - 1 ] [+ x + 1 & y - 1]
+
+    const zA = currentLevelTiles.segmentsZ[zPosition + 1] || null;
+    const zC = currentLevelTiles.segmentsZ[zPosition] || null;
+    const zB = currentLevelTiles.segmentsZ[zPosition - 1] || null;
+
+    if (!zC) return new Error("Could not find current Tile position Z axis");
+
+    const findNeighbours = (zLevel: Segment) => {
+      return {
+        TL: zLevel.rows[xPosition - 1]?.[yPosition + 1] || null,
+        TM: zLevel.rows[xPosition]?.[yPosition + 1] || null,
+        TR: zLevel.rows[xPosition + 1]?.[yPosition + 1] || null,
+        ML: zLevel.rows[xPosition - 1]?.[yPosition] || null,
+        MM: zLevel.rows[xPosition]?.[yPosition] || null,
+        MR: zLevel.rows[xPosition + 1]?.[yPosition] || null,
+        BL: zLevel.rows[xPosition - 1]?.[yPosition - 1] || null,
+        BM: zLevel.rows[xPosition]?.[yPosition - 1] || null,
+        BR: zLevel.rows[xPosition + 1]?.[yPosition - 1] || null,
+      }
+    };
+
+    return {
+      layerAboveNeighbours: zA && zA.rows ? findNeighbours(zA) : null,
+      layerCurrentNeighbours: zC && zC.rows ? findNeighbours(zC) : null,
+      layerBelowNeightbours: zB && zB.rows ? findNeighbours(zB) : null,
+    }
+  }
+
   setupCurrentLevel() {
     let cameraPosition = null;
     const level = Levels[this.currentLevelIndex];
@@ -84,7 +118,9 @@ export default class Stage {
       for (var y = 0; y < currentZ.rows.length; y++) {
         const currentY = currentZ.rows[y];
         // run X axis loop
-        for (var x = 0; x < currentY.length; x++) {          
+        for (var x = 0; x < currentY.length; x++) {
+          const neighbouringTiles = this.returnNeighbouringTiles(x, y, z, level);
+          console.log(neighbouringTiles);
           switch(currentY[x]) {
             case TILES.water:
               this.levelTiles.push(new Water(x, y, z));

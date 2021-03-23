@@ -58,6 +58,38 @@ var Stage = /** @class */ (function () {
         // Run the loop
         this.loop();
     };
+    Stage.prototype.returnNeighbouringTiles = function (xPosition, yPosition, zPosition, currentLevelTiles) {
+        // For Z, Z + 1 & Z - 1:
+        // [x - 1 & y + 1] [ x & y + 1 ] [+ x + 1 & y + 1]
+        // [x - 1 & y    ] [   TILE!   ] [+ x + 1 & y    ]
+        // [x - 1 & y - 1] [ x & y - 1 ] [+ x + 1 & y - 1]
+        var zA = currentLevelTiles.segmentsZ[zPosition + 1] || null;
+        var zC = currentLevelTiles.segmentsZ[zPosition] || null;
+        var zB = currentLevelTiles.segmentsZ[zPosition - 1] || null;
+        console.log(zA, zC, zB);
+        if (!zC)
+            return new Error("Could not find current Tile position Z axis");
+        var findNeighbours = function (zLevel) {
+            var _a, _b, _c, _d, _e, _f, _g, _h, _j;
+            console.log(zLevel.rows);
+            return {
+                TL: ((_a = zLevel.rows[xPosition - 1]) === null || _a === void 0 ? void 0 : _a[yPosition + 1]) || null,
+                TM: ((_b = zLevel.rows[xPosition]) === null || _b === void 0 ? void 0 : _b[yPosition + 1]) || null,
+                TR: ((_c = zLevel.rows[xPosition + 1]) === null || _c === void 0 ? void 0 : _c[yPosition + 1]) || null,
+                ML: ((_d = zLevel.rows[xPosition - 1]) === null || _d === void 0 ? void 0 : _d[yPosition]) || null,
+                MM: ((_e = zLevel.rows[xPosition]) === null || _e === void 0 ? void 0 : _e[yPosition]) || null,
+                MR: ((_f = zLevel.rows[xPosition + 1]) === null || _f === void 0 ? void 0 : _f[yPosition]) || null,
+                BL: ((_g = zLevel.rows[xPosition - 1]) === null || _g === void 0 ? void 0 : _g[yPosition - 1]) || null,
+                BM: ((_h = zLevel.rows[xPosition]) === null || _h === void 0 ? void 0 : _h[yPosition - 1]) || null,
+                BR: ((_j = zLevel.rows[xPosition + 1]) === null || _j === void 0 ? void 0 : _j[yPosition - 1]) || null,
+            };
+        };
+        return {
+            layerAboveNeighbours: zA && zA.rows ? findNeighbours(zA) : null,
+            layerCurrentNeighbours: zC && zC.rows ? findNeighbours(zC) : null,
+            layerBelowNeightbours: zB && zB.rows ? findNeighbours(zB) : null,
+        };
+    };
     Stage.prototype.setupCurrentLevel = function () {
         var cameraPosition = null;
         var level = Levels_1.default[this.currentLevelIndex];
@@ -69,6 +101,8 @@ var Stage = /** @class */ (function () {
                 var currentY = currentZ.rows[y];
                 // run X axis loop
                 for (var x = 0; x < currentY.length; x++) {
+                    var neighbouringTiles = this.returnNeighbouringTiles(x, y, z, level);
+                    console.log(neighbouringTiles);
                     switch (currentY[x]) {
                         case tiles_1.default.water:
                             this.levelTiles.push(new Water_1.default(x, y, z));

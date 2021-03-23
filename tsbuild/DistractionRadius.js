@@ -17,7 +17,6 @@ var DestractionRadius = /** @class */ (function () {
             debugger;
             var distractionInstance = this;
             var distractionAmount = distractionInstance.computeDistractionAmount(myAgent);
-            console.log(distractionAmount);
             myAgent.body.velocity.x = distractionAmount.x;
             myAgent.body.velocity.y = distractionAmount.y;
             var oldZ = myAgent.body.velocity.z;
