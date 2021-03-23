@@ -12,9 +12,10 @@ export default class Flock {
 
   update() {
     for (var myAgent of this.flockBodies) {
-      const alignment = this.computeAlignment(myAgent);
-      const cohesion = this.computeCohesion(myAgent);
-      const separation = this.computeSeparation(myAgent);
+      const flockInstance = this;
+      const alignment = flockInstance.computeAlignment(myAgent);
+      const cohesion = flockInstance.computeCohesion(myAgent);
+      const separation = flockInstance.computeSeparation(myAgent);
 
       myAgent.body.velocity.x = alignment.x + cohesion.x + separation.x;
       myAgent.body.velocity.y = alignment.y + cohesion.y + separation.y;
@@ -22,6 +23,7 @@ export default class Flock {
 
       myAgent.body.velocity.normalize(AGENT_SPEED);
       myAgent.body.velocity.z = oldZ;
+      return;
     }
   }
 

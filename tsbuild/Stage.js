@@ -91,14 +91,14 @@ var Stage = /** @class */ (function () {
                             break;
                         case tiles_1.default.rock:
                             this.levelTiles.push(new Rock_1.default(x, y, z));
-                            this.distractions.push(new DistractionRadius_1.default(this.ducks, x * Tile_1.SIZE, y * Tile_1.SIZE, z * Tile_1.SIZE, false, 0.1, 0.1));
+                            this.distractions.push(new DistractionRadius_1.default(this.ducks, x * Tile_1.SIZE, y * Tile_1.SIZE, z * Tile_1.SIZE, false, 2, 0.1));
                             break;
                         case tiles_1.default.bridge:
                             this.levelTiles.push(new Bridge_1.default(x, y, z));
                             break;
                         case tiles_1.default.distraction:
                             this.levelTiles.push(new Distraction_1.default(x, y, z));
-                            this.distractions.push(new DistractionRadius_1.default(this.ducks, x * Tile_1.SIZE, y * Tile_1.SIZE, z * Tile_1.SIZE, true));
+                            this.distractions.push(new DistractionRadius_1.default(this.ducks, x * Tile_1.SIZE, y * Tile_1.SIZE, z * Tile_1.SIZE, false, 20));
                             break;
                         default:
                             break;
@@ -130,7 +130,7 @@ var Stage = /** @class */ (function () {
             }
         }
         if (this.flock !== null) {
-            this.flock.update();
+            // this.flock.update();
         }
         for (var _b = 0, _c = this.ducks; _b < _c.length; _b++) {
             var duck = _c[_b];

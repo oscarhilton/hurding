@@ -10,34 +10,33 @@ var DestractionRadius = /** @class */ (function () {
         this.inverse = inverse;
         this.distance = distance || DISTANCE_FROM_DISTRACTOR;
         this.strength = strength || 1;
-        console.log(this.inverse, "<<<<<");
     }
     DestractionRadius.prototype.update = function () {
         for (var _i = 0, _a = this.distractBodies; _i < _a.length; _i++) {
             var myAgent = _a[_i];
-            var distractionAmount = this.computeDistractionAmount(myAgent);
-            myAgent.body.velocity.x = distractionAmount.x * this.strength;
-            myAgent.body.velocity.y = distractionAmount.y * this.strength;
+            debugger;
+            var distractionInstance = this;
+            var distractionAmount = distractionInstance.computeDistractionAmount(myAgent);
+            console.log(distractionAmount);
+            myAgent.body.velocity.x = distractionAmount.x;
+            myAgent.body.velocity.y = distractionAmount.y;
             var oldZ = myAgent.body.velocity.z;
             myAgent.body.velocity.normalize(AGENT_SPEED);
             myAgent.body.velocity.z = oldZ;
+            return;
         }
     };
     DestractionRadius.prototype.computeDistractionAmount = function (myAgent) {
-        var point = new cannon_1.Vec3();
-        var distractedCount = 0;
-        var distance = myAgent.body.position.distanceTo(this.distractOrigin);
-        if (distance < DISTANCE_FROM_DISTRACTOR) {
-            point.x += myAgent.body.position.x - this.distractOrigin.x;
-            point.y += myAgent.body.position.y - this.distractOrigin.y;
-            if (this.inverse) {
-                point.x *= -1;
-                point.y *= -1;
-            }
-            distractedCount++;
+        var agentToPoint = new cannon_1.Vec3();
+        agentToPoint = myAgent.body.position.negate(agentToPoint);
+        var distance = agentToPoint.norm();
+        agentToPoint.normalize();
+        agentToPoint.mult(1500 / Math.pow(distance, 2), new cannon_1.Vec3(this.strength, this.strength, this.strength));
+        if (this.inverse) {
+            agentToPoint.x *= -1;
+            agentToPoint.y *= -1;
         }
-        console.log(point);
-        return point;
+        return agentToPoint;
     };
     return DestractionRadius;
 }());

@@ -53,10 +53,6 @@ var Duck = /** @class */ (function (_super) {
     Duck.prototype.update = function () {
         _super.prototype.update.call(this);
         if (this.isAlive) {
-            // this.body.velocity.x = 0;
-            // this.body.velocity.y = 0;
-            // this.body.velocity.x = (this.body.velocity.x + Math.random() * 2.5) * (Math.round(Math.random()) * 2 - 1);
-            // this.body.velocity.y = (this.body.velocity.y + Math.random() * 2.5) * (Math.round(Math.random()) * 2 - 1);
         }
         else {
             console.log("duck is dead");

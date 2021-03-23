@@ -17,39 +17,36 @@ export default class DestractionRadius {
     this.inverse = inverse;
     this.distance = distance || DISTANCE_FROM_DISTRACTOR;
     this.strength = strength || 1;
-
-    console.log(this.inverse, "<<<<<");
   }
 
   update() {
     for (var myAgent of this.distractBodies) {
-      const distractionAmount = this.computeDistractionAmount(myAgent);
+      debugger
+      const distractionInstance = this;
+      const distractionAmount = distractionInstance.computeDistractionAmount(myAgent);
 
-      myAgent.body.velocity.x = distractionAmount.x * this.strength;
-      myAgent.body.velocity.y = distractionAmount.y * this.strength;
+      console.log(distractionAmount);
+
+      myAgent.body.velocity.x = distractionAmount.x;
+      myAgent.body.velocity.y = distractionAmount.y;
       const oldZ = myAgent.body.velocity.z;
 
       myAgent.body.velocity.normalize(AGENT_SPEED);
       myAgent.body.velocity.z = oldZ;
+      return;
     }
   }
 
   computeDistractionAmount(myAgent: PhysicsMesh): Vec3 {
-    let point = new Vec3();
-    let distractedCount = 0;
-
-    const distance = myAgent.body.position.distanceTo(this.distractOrigin);
-    if (distance < DISTANCE_FROM_DISTRACTOR) {
-      point.x += myAgent.body.position.x - this.distractOrigin.x;
-      point.y += myAgent.body.position.y - this.distractOrigin.y;
-      if (this.inverse) {
-        point.x *= -1;
-        point.y *= -1;
-      }
-      distractedCount++;
+    let agentToPoint = new Vec3();
+    agentToPoint = myAgent.body.position.negate(agentToPoint);
+    const distance = agentToPoint.norm();
+    agentToPoint.normalize();
+    agentToPoint.mult(1500 / Math.pow(distance, 2), new Vec3(this.strength, this.strength, this.strength));
+    if (this.inverse) {
+      agentToPoint.x *= -1;
+      agentToPoint.y *= -1;
     }
-
-    console.log(point);
-    return point;
+    return agentToPoint;
   }
 }

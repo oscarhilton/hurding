@@ -107,14 +107,14 @@ export default class Stage {
               break;
             case TILES.rock:
               this.levelTiles.push(new Rock(x, y, z));
-              this.distractions.push(new DistractionRadius(this.ducks, x * TILE_SIZE, y * TILE_SIZE, z * TILE_SIZE, false, 0.1, 0.1));
+              this.distractions.push(new DistractionRadius(this.ducks, x * TILE_SIZE, y * TILE_SIZE, z * TILE_SIZE, false, 2, 0.1));
               break;
             case TILES.bridge:
               this.levelTiles.push(new Bridge(x, y, z));
               break;
             case TILES.distraction:
               this.levelTiles.push(new Distraction(x, y, z));
-              this.distractions.push(new DistractionRadius(this.ducks, x * TILE_SIZE, y * TILE_SIZE, z * TILE_SIZE, true));
+              this.distractions.push(new DistractionRadius(this.ducks, x * TILE_SIZE, y * TILE_SIZE, z * TILE_SIZE, false, 20));
               break;
             default:
               break;
@@ -149,7 +149,7 @@ export default class Stage {
       }
     }
     if (this.flock !== null) {
-      this.flock.update();
+      // this.flock.update();
     }
     for (var duck of this.ducks) {
       duck.update();

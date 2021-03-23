@@ -10,14 +10,16 @@ var Flock = /** @class */ (function () {
     Flock.prototype.update = function () {
         for (var _i = 0, _a = this.flockBodies; _i < _a.length; _i++) {
             var myAgent = _a[_i];
-            var alignment = this.computeAlignment(myAgent);
-            var cohesion = this.computeCohesion(myAgent);
-            var separation = this.computeSeparation(myAgent);
+            var flockInstance = this;
+            var alignment = flockInstance.computeAlignment(myAgent);
+            var cohesion = flockInstance.computeCohesion(myAgent);
+            var separation = flockInstance.computeSeparation(myAgent);
             myAgent.body.velocity.x = alignment.x + cohesion.x + separation.x;
             myAgent.body.velocity.y = alignment.y + cohesion.y + separation.y;
             var oldZ = myAgent.body.velocity.z;
             myAgent.body.velocity.normalize(AGENT_SPEED);
             myAgent.body.velocity.z = oldZ;
+            return;
         }
     };
     // Alignment is a behavior that causes a particular agent to line up with agents close by.
