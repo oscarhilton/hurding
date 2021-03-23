@@ -2,18 +2,7 @@ import { World } from "cannon";
 import Duck from "./Duck";
 import ThreeInstance from "./ThreeInstance";
 import TheeInstance from "./ThreeInstance";
-import TILES from './tiles';
 import Levels from "./Levels";
-import Tile, { SIZE as TILE_SIZE }  from "./Tiles/Tile";
-import Water from "./Tiles/Water";
-import Floor from "./Tiles/Floor";
-import Rock from "./Tiles/Rock";
-import Bridge from "./Tiles/Bridge";
-import Distraction from "./Tiles/Distraction";
-import Flock from "./Flock";
-import DistractionRadius from "./DistractionRadius";
-import Level, { Segment } from "./Level";
-import NeighbourGrid, { NeighbourGridResult } from "./NeighbourGrid";
 
 const GRAVITY = -9.82 // real world gravity;
 export default class Stage {
@@ -27,9 +16,6 @@ export default class Stage {
   maxSubSteps: number;
   clock: number;
   currentLevelIndex: number;
-  levelTiles: Tile[];
-  flock: Flock | null;
-  distractions: DistractionRadius[];
 
   constructor() {
     // Set up THREE
@@ -38,7 +24,6 @@ export default class Stage {
     this.world = new World();
     // Set the ducks array
     this.ducks = [];
-    this.flock = null;
     // Set up time vars
     this.fixedTimeStep = 1.0 / 60.0; // seconds
     this.maxSubSteps = 10;
@@ -49,13 +34,11 @@ export default class Stage {
 
     // Levels
     this.currentLevelIndex = 0;
-    this.levelTiles = [];
-    this.distractions = [];
   
     // Handle THREE setup
     this.setupThree();
-    // Set up level;
-    this.setupCurrentLevel();
+    // Set up game;
+    this.setupGame();
   }
 
   setupThree() {
@@ -65,6 +48,9 @@ export default class Stage {
 
   setupGame() {
     console.log("SETTING UP GAME");
+    // Set up level
+    const level = Levels[this.currentLevelIndex];
+    level.setup(this.ducks, this.totalDucks, this.world, this.three.scene, this.three);
     // Set the gravity
     this.world.gravity.set(0, 0, GRAVITY);
     // Set up all the ducks
@@ -73,102 +59,6 @@ export default class Stage {
     }
     // Run the loop
     this.loop();
-  }
-
-  returnNeighbouringTiles(xPosition: number, yPosition: number, zPosition: number, currentLevelTiles: Level): NeighbourGridResult {
-    // For Z, Z + 1 & Z - 1:
-    // [x - 1 & y + 1] [ x & y + 1 ] [+ x + 1 & y + 1]
-    // [x - 1 & y    ] [   TILE!   ] [+ x + 1 & y    ]
-    // [x - 1 & y - 1] [ x & y - 1 ] [+ x + 1 & y - 1]
-
-    const zA = currentLevelTiles.segmentsZ[zPosition + 1] || null;
-    const zC = currentLevelTiles.segmentsZ[zPosition] || null;
-    const zB = currentLevelTiles.segmentsZ[zPosition - 1] || null;
-
-    const findNeighbours = (zLevel: Segment) => 
-    new NeighbourGrid(
-      zLevel.rows[yPosition - 1]?.[xPosition + 1] || null, // TL
-      zLevel.rows[yPosition]?.[xPosition + 1] || null, // TM
-      zLevel.rows[yPosition + 1]?.[xPosition + 1] || null, // TR
-      zLevel.rows[yPosition - 1]?.[xPosition] || null, // ML
-      zLevel.rows[yPosition]?.[xPosition] || null, // MM
-      zLevel.rows[yPosition + 1]?.[xPosition] || null, // MR
-      zLevel.rows[yPosition - 1]?.[xPosition - 1] || null, // BL
-      zLevel.rows[yPosition]?.[xPosition - 1] || null, // BM
-      zLevel.rows[yPosition + 1]?.[xPosition - 1] || null, // BR
-    );
-
-    return {
-      layerAboveNeighbours: zA && zA.rows ? findNeighbours(zA) : null,
-      layerCurrentNeighbours: zC && zC.rows ? findNeighbours(zC) : null,
-      layerBelowNeighbours: zB && zB.rows ? findNeighbours(zB) : null,
-    }
-  }
-
-  setupCurrentLevel() {
-    let cameraPosition = null;
-    const level = Levels[this.currentLevelIndex];
-    
-    // run Z axis loop
-    for (var z = 0; z < level.segmentsZ.length; z++) {
-      let currentZ = level.segmentsZ[z];
-      // run Y axis loop
-      for (var y = 0; y < currentZ.rows.length; y++) {
-        let currentY = currentZ.rows[y];
-        // run X axis loop
-        for (var x = 0; x < currentY.length; x++) {
-          let neighbouringTiles = this.returnNeighbouringTiles(x, y, z, level);
-          console.log(currentY[x]);
-          console.log(neighbouringTiles, z, level.segmentsZ.length);
-          switch(currentY[x]) {
-            case TILES.water:
-              this.levelTiles.push(new Water(neighbouringTiles, x, y, z));
-              break;
-            case TILES.spawn:
-              // Update camera position variable
-              cameraPosition = { x: x * TILE_SIZE, y: y * TILE_SIZE };
-              // Add the ducks
-              if (this.totalDucks > 0) {
-                const columnDucks = 10 % this.totalDucks;
-                for (var col = 0; col < columnDucks; col++) {
-                  for (var row = 0; row < this.totalDucks / columnDucks; row++) {
-                    this.ducks.push(new Duck(this.world, this.three.scene, row * 1.1 + x * TILE_SIZE, col * 1.1 + y * TILE_SIZE));
-                  }
-                }
-                this.flock = new Flock(this.ducks);
-              }
-            case TILES.floor:
-              this.levelTiles.push(new Floor(neighbouringTiles, x, y, z));
-              break;
-            case TILES.rock:
-              this.levelTiles.push(new Rock(neighbouringTiles, x, y, z));
-              this.distractions.push(new DistractionRadius(this.ducks, x * TILE_SIZE, y * TILE_SIZE, z * TILE_SIZE, false, 2, 0.1));
-              break;
-            case TILES.bridge:
-              this.levelTiles.push(new Bridge(neighbouringTiles, x, y, z));
-              break;
-            case TILES.distraction:
-              this.levelTiles.push(new Distraction(neighbouringTiles, x, y, z));
-              this.distractions.push(new DistractionRadius(this.ducks, x * TILE_SIZE, y * TILE_SIZE, z * TILE_SIZE, false, 20));
-              break;
-            default:
-              continue;
-          }
-        }
-      }
-    }
-
-    if (cameraPosition) {
-      this.three.updateCamera(cameraPosition);
-    }
-
-    // Display level tiles
-    for (var tile of this.levelTiles) {
-      tile.setup(this.world, this.three.scene);
-    }
-
-    // Set the game
-    this.setupGame();
   }
 
   simulationLoop(time: number) {
