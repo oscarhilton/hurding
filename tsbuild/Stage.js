@@ -16,6 +16,7 @@ var Bridge_1 = __importDefault(require("./Tiles/Bridge"));
 var Distraction_1 = __importDefault(require("./Tiles/Distraction"));
 var Flock_1 = __importDefault(require("./Flock"));
 var DistractionRadius_1 = __importDefault(require("./DistractionRadius"));
+var NeighbourGrid_1 = __importDefault(require("./NeighbourGrid"));
 var GRAVITY = -9.82; // real world gravity;
 var Stage = /** @class */ (function () {
     function Stage() {
@@ -66,26 +67,22 @@ var Stage = /** @class */ (function () {
         var zA = currentLevelTiles.segmentsZ[zPosition + 1] || null;
         var zC = currentLevelTiles.segmentsZ[zPosition] || null;
         var zB = currentLevelTiles.segmentsZ[zPosition - 1] || null;
-        if (!zC)
-            return new Error("Could not find current Tile position Z axis");
         var findNeighbours = function (zLevel) {
             var _a, _b, _c, _d, _e, _f, _g, _h, _j;
-            return {
-                TL: ((_a = zLevel.rows[xPosition - 1]) === null || _a === void 0 ? void 0 : _a[yPosition + 1]) || null,
-                TM: ((_b = zLevel.rows[xPosition]) === null || _b === void 0 ? void 0 : _b[yPosition + 1]) || null,
-                TR: ((_c = zLevel.rows[xPosition + 1]) === null || _c === void 0 ? void 0 : _c[yPosition + 1]) || null,
-                ML: ((_d = zLevel.rows[xPosition - 1]) === null || _d === void 0 ? void 0 : _d[yPosition]) || null,
-                MM: ((_e = zLevel.rows[xPosition]) === null || _e === void 0 ? void 0 : _e[yPosition]) || null,
-                MR: ((_f = zLevel.rows[xPosition + 1]) === null || _f === void 0 ? void 0 : _f[yPosition]) || null,
-                BL: ((_g = zLevel.rows[xPosition - 1]) === null || _g === void 0 ? void 0 : _g[yPosition - 1]) || null,
-                BM: ((_h = zLevel.rows[xPosition]) === null || _h === void 0 ? void 0 : _h[yPosition - 1]) || null,
-                BR: ((_j = zLevel.rows[xPosition + 1]) === null || _j === void 0 ? void 0 : _j[yPosition - 1]) || null,
-            };
+            return new NeighbourGrid_1.default(((_a = zLevel.rows[yPosition - 1]) === null || _a === void 0 ? void 0 : _a[xPosition + 1]) || null, // TL
+            ((_b = zLevel.rows[yPosition]) === null || _b === void 0 ? void 0 : _b[xPosition + 1]) || null, // TM
+            ((_c = zLevel.rows[yPosition + 1]) === null || _c === void 0 ? void 0 : _c[xPosition + 1]) || null, // TR
+            ((_d = zLevel.rows[yPosition - 1]) === null || _d === void 0 ? void 0 : _d[xPosition]) || null, // ML
+            ((_e = zLevel.rows[yPosition]) === null || _e === void 0 ? void 0 : _e[xPosition]) || null, // MM
+            ((_f = zLevel.rows[yPosition + 1]) === null || _f === void 0 ? void 0 : _f[xPosition]) || null, // MR
+            ((_g = zLevel.rows[yPosition - 1]) === null || _g === void 0 ? void 0 : _g[xPosition - 1]) || null, // BL
+            ((_h = zLevel.rows[yPosition]) === null || _h === void 0 ? void 0 : _h[xPosition - 1]) || null, // BM
+            ((_j = zLevel.rows[yPosition + 1]) === null || _j === void 0 ? void 0 : _j[xPosition - 1]) || null);
         };
         return {
             layerAboveNeighbours: zA && zA.rows ? findNeighbours(zA) : null,
             layerCurrentNeighbours: zC && zC.rows ? findNeighbours(zC) : null,
-            layerBelowNeightbours: zB && zB.rows ? findNeighbours(zB) : null,
+            layerBelowNeighbours: zB && zB.rows ? findNeighbours(zB) : null,
         };
     };
     Stage.prototype.setupCurrentLevel = function () {
@@ -100,12 +97,13 @@ var Stage = /** @class */ (function () {
                 // run X axis loop
                 for (var x = 0; x < currentY.length; x++) {
                     var neighbouringTiles = this.returnNeighbouringTiles(x, y, z, level);
+                    console.log(currentY[x]);
+                    console.log(neighbouringTiles, z, level.segmentsZ.length);
                     switch (currentY[x]) {
                         case tiles_1.default.water:
                             this.levelTiles.push(new Water_1.default(neighbouringTiles, x, y, z));
                             break;
                         case tiles_1.default.spawn:
-                            console.log(neighbouringTiles);
                             // Update camera position variable
                             cameraPosition = { x: x * Tile_1.SIZE, y: y * Tile_1.SIZE };
                             // Add the ducks
@@ -133,7 +131,7 @@ var Stage = /** @class */ (function () {
                             this.distractions.push(new DistractionRadius_1.default(this.ducks, x * Tile_1.SIZE, y * Tile_1.SIZE, z * Tile_1.SIZE, false, 20));
                             break;
                         default:
-                            break;
+                            continue;
                     }
                 }
             }

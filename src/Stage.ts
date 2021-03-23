@@ -13,6 +13,7 @@ import Distraction from "./Tiles/Distraction";
 import Flock from "./Flock";
 import DistractionRadius from "./DistractionRadius";
 import Level, { Segment } from "./Level";
+import NeighbourGrid, { NeighbourGridResult } from "./NeighbourGrid";
 
 const GRAVITY = -9.82 // real world gravity;
 export default class Stage {
@@ -74,7 +75,7 @@ export default class Stage {
     this.loop();
   }
 
-  returnNeighbouringTiles(xPosition: number, yPosition: number, zPosition: number, currentLevelTiles: Level) {
+  returnNeighbouringTiles(xPosition: number, yPosition: number, zPosition: number, currentLevelTiles: Level): NeighbourGridResult {
     // For Z, Z + 1 & Z - 1:
     // [x - 1 & y + 1] [ x & y + 1 ] [+ x + 1 & y + 1]
     // [x - 1 & y    ] [   TILE!   ] [+ x + 1 & y    ]
@@ -84,26 +85,23 @@ export default class Stage {
     const zC = currentLevelTiles.segmentsZ[zPosition] || null;
     const zB = currentLevelTiles.segmentsZ[zPosition - 1] || null;
 
-    if (!zC) return new Error("Could not find current Tile position Z axis");
-
-    const findNeighbours = (zLevel: Segment) => {
-      return {
-        TL: zLevel.rows[xPosition - 1]?.[yPosition + 1] || null,
-        TM: zLevel.rows[xPosition]?.[yPosition + 1] || null,
-        TR: zLevel.rows[xPosition + 1]?.[yPosition + 1] || null,
-        ML: zLevel.rows[xPosition - 1]?.[yPosition] || null,
-        MM: zLevel.rows[xPosition]?.[yPosition] || null,
-        MR: zLevel.rows[xPosition + 1]?.[yPosition] || null,
-        BL: zLevel.rows[xPosition - 1]?.[yPosition - 1] || null,
-        BM: zLevel.rows[xPosition]?.[yPosition - 1] || null,
-        BR: zLevel.rows[xPosition + 1]?.[yPosition - 1] || null,
-      }
-    };
+    const findNeighbours = (zLevel: Segment) => 
+    new NeighbourGrid(
+      zLevel.rows[yPosition - 1]?.[xPosition + 1] || null, // TL
+      zLevel.rows[yPosition]?.[xPosition + 1] || null, // TM
+      zLevel.rows[yPosition + 1]?.[xPosition + 1] || null, // TR
+      zLevel.rows[yPosition - 1]?.[xPosition] || null, // ML
+      zLevel.rows[yPosition]?.[xPosition] || null, // MM
+      zLevel.rows[yPosition + 1]?.[xPosition] || null, // MR
+      zLevel.rows[yPosition - 1]?.[xPosition - 1] || null, // BL
+      zLevel.rows[yPosition]?.[xPosition - 1] || null, // BM
+      zLevel.rows[yPosition + 1]?.[xPosition - 1] || null, // BR
+    );
 
     return {
       layerAboveNeighbours: zA && zA.rows ? findNeighbours(zA) : null,
       layerCurrentNeighbours: zC && zC.rows ? findNeighbours(zC) : null,
-      layerBelowNeightbours: zB && zB.rows ? findNeighbours(zB) : null,
+      layerBelowNeighbours: zB && zB.rows ? findNeighbours(zB) : null,
     }
   }
 
@@ -113,19 +111,20 @@ export default class Stage {
     
     // run Z axis loop
     for (var z = 0; z < level.segmentsZ.length; z++) {
-      const currentZ = level.segmentsZ[z];
+      let currentZ = level.segmentsZ[z];
       // run Y axis loop
       for (var y = 0; y < currentZ.rows.length; y++) {
-        const currentY = currentZ.rows[y];
+        let currentY = currentZ.rows[y];
         // run X axis loop
         for (var x = 0; x < currentY.length; x++) {
-          const neighbouringTiles = this.returnNeighbouringTiles(x, y, z, level);
+          let neighbouringTiles = this.returnNeighbouringTiles(x, y, z, level);
+          console.log(currentY[x]);
+          console.log(neighbouringTiles, z, level.segmentsZ.length);
           switch(currentY[x]) {
             case TILES.water:
               this.levelTiles.push(new Water(neighbouringTiles, x, y, z));
               break;
             case TILES.spawn:
-              console.log(neighbouringTiles);
               // Update camera position variable
               cameraPosition = { x: x * TILE_SIZE, y: y * TILE_SIZE };
               // Add the ducks
@@ -153,7 +152,7 @@ export default class Stage {
               this.distractions.push(new DistractionRadius(this.ducks, x * TILE_SIZE, y * TILE_SIZE, z * TILE_SIZE, false, 20));
               break;
             default:
-              break;
+              continue;
           }
         }
       }

@@ -22,7 +22,10 @@ var Tile_1 = __importDefault(require("./Tile"));
 var Distraction = /** @class */ (function (_super) {
     __extends(Distraction, _super);
     function Distraction(neighbouringTiles, x, y, z) {
-        return _super.call(this, neighbouringTiles, false, 0xFF6347, x, y, z) || this;
+        var _this = this;
+        console.log(neighbouringTiles);
+        _this = _super.call(this, neighbouringTiles, true, x, y, z) || this;
+        return _this;
     }
     return Distraction;
 }(Tile_1.default));

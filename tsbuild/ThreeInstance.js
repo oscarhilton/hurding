@@ -18,12 +18,14 @@ var TheeInstance = /** @class */ (function () {
         this.controls.enableDamping = true;
         this.controls.dampingFactor = 0.25;
         this.controls.enableZoom = true;
+        this.axesHelper = new three_1.AxesHelper(300);
     }
     TheeInstance.prototype.setup = function () {
         // this.camera.position.set(0, 0, 20);
         this.scene.add(this.camera);
         this.scene.add(this.ambientLight);
         this.scene.add(this.sun);
+        this.scene.add(this.axesHelper);
         // Add fog
         this.scene.fog = new three_1.Fog(0x87CEEB, near, far);
         // Add background

@@ -19,11 +19,13 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var Tile_1 = __importDefault(require("./Tile"));
-var LoadTexture_1 = __importDefault(require("../textures/LoadTexture"));
 var Floor = /** @class */ (function (_super) {
     __extends(Floor, _super);
     function Floor(neighbouringTiles, x, y, z) {
-        return _super.call(this, neighbouringTiles, false, 0x7cfc00, x, y, z, LoadTexture_1.default("textures/grass.jpeg")) || this;
+        var _this = this;
+        console.log(neighbouringTiles);
+        _this = _super.call(this, neighbouringTiles, true, x, y, z) || this;
+        return _this;
     }
     return Floor;
 }(Tile_1.default));

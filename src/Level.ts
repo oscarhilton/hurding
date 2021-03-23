@@ -6,7 +6,7 @@ export class Segment {
   constructor(map: string) {
     this.rows = map.split(',').map(row => {
        return row.split('').filter(character => Object.values(TILES).includes(character));
-    }).filter(array => array.length > 0).reverse();
+    }).filter(array => array.length > 0);
   }
 }
 

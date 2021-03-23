@@ -1,7 +1,9 @@
-import Tile from "./Tile";
-
+import LoadTexture from "../textures/LoadTexture";
+import Tile from './Tile';
+import { MeshPhongMaterial } from 'three';
 export default class Rock extends Tile {
   constructor(neighbouringTiles: object, x: number, y: number, z: number) {
-    super(neighbouringTiles, false, 0xd3d3d3, x, y, z, null);
+    console.log(neighbouringTiles);
+    super(neighbouringTiles, true, x, y, z);
   }
 }

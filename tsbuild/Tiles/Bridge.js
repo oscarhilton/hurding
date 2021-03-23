@@ -18,20 +18,15 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var OBJLoader_js_1 = require("three/examples/jsm/loaders/OBJLoader.js");
 var Tile_1 = __importDefault(require("./Tile"));
 var Bridge = /** @class */ (function (_super) {
     __extends(Bridge, _super);
     function Bridge(neighbouringTiles, x, y, z) {
-        var _this = _super.call(this, neighbouringTiles, false, 0xD2691E, x, y, z, null) || this;
-        var loader = new OBJLoader_js_1.OBJLoader();
-        loader.load("objects/logs.obj", function (root) { return _this.object = root; });
+        var _this = this;
+        console.log(neighbouringTiles);
+        _this = _super.call(this, neighbouringTiles, true, x, y, z) || this;
         return _this;
     }
-    Bridge.prototype.setup = function (world, scene) {
-        _super.prototype.setup.call(this, world, scene);
-        scene.add(this.mesh);
-    };
     return Bridge;
 }(Tile_1.default));
 exports.default = Bridge;

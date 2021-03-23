@@ -19,14 +19,19 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var Tile_1 = __importDefault(require("./Tile"));
-var Water = /** @class */ (function (_super) {
-    __extends(Water, _super);
-    function Water(neighbouringTiles, x, y, z) {
+var three_1 = require("three");
+var MaterialTile = /** @class */ (function (_super) {
+    __extends(MaterialTile, _super);
+    function MaterialTile(textures, killsDucks, x, y, z) {
         var _this = this;
-        console.log(neighbouringTiles);
-        _this = _super.call(this, neighbouringTiles, true, x, y, z) || this;
+        var material = textures.map(function (t) {
+            if (t === three_1.Texture) {
+                new three_1.MeshPhongMaterial({ map: t, transparent: true, visible: true });
+            }
+        });
+        _this = _super.call(this, killsDucks, x, y, z, material) || this;
         return _this;
     }
-    return Water;
+    return MaterialTile;
 }(Tile_1.default));
-exports.default = Water;
+exports.default = MaterialTile;

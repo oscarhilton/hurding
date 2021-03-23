@@ -1,7 +1,11 @@
-import Tile from './Tile';
 import LoadTexture from "../textures/LoadTexture";
+import Tile from './Tile';
+import { MeshPhongMaterial, MeshBasicMaterial, Mesh } from 'three';
+import TILES from '../tiles';
+import { NeighbourGridResult } from '../NeighbourGrid';
 export default class Water extends Tile {
-  constructor(neighbouringTiles: object, x: number, y: number, z: number) {
-    super(neighbouringTiles, true, 0x80DAEB, x, y, z, LoadTexture("textures/sea.png"));
+  constructor(neighbouringTiles: NeighbourGridResult, x: number, y: number, z: number) {
+    console.log(neighbouringTiles);
+    super(neighbouringTiles, true, x, y, z);
   }
 }

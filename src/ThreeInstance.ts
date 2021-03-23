@@ -1,4 +1,4 @@
-import { Scene, PerspectiveCamera, WebGLRenderer, AmbientLight, DirectionalLight, Fog, Color, Vector3 } from "three";
+import { Scene, PerspectiveCamera, WebGLRenderer, AmbientLight, DirectionalLight, Fog, Color, Vector3, AxesHelper } from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 
 const fov = 45;
@@ -13,6 +13,7 @@ export default class TheeInstance {
   ambientLight: AmbientLight;
   sun: DirectionalLight;
   controls: OrbitControls;
+  axesHelper: AxesHelper;
 
   constructor() {
     this.scene = new Scene();
@@ -25,6 +26,8 @@ export default class TheeInstance {
     this.controls.enableDamping = true
     this.controls.dampingFactor = 0.25
     this.controls.enableZoom = true;
+
+    this.axesHelper = new AxesHelper( 300 );
   }
 
   setup() {
@@ -32,6 +35,7 @@ export default class TheeInstance {
     this.scene.add(this.camera);
     this.scene.add(this.ambientLight);
     this.scene.add(this.sun);
+    this.scene.add(this.axesHelper);
     // Add fog
     this.scene.fog = new Fog(0x87CEEB, near, far);
     // Add background
