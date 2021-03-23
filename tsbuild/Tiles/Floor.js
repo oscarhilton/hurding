@@ -22,8 +22,8 @@ var Tile_1 = __importDefault(require("./Tile"));
 var LoadTexture_1 = __importDefault(require("../textures/LoadTexture"));
 var Floor = /** @class */ (function (_super) {
     __extends(Floor, _super);
-    function Floor(x, y, z) {
-        return _super.call(this, false, 0x7cfc00, x, y, z, LoadTexture_1.default("textures/grass.jpeg")) || this;
+    function Floor(neighbouringTiles, x, y, z) {
+        return _super.call(this, neighbouringTiles, false, 0x7cfc00, x, y, z, LoadTexture_1.default("textures/grass.jpeg")) || this;
     }
     return Floor;
 }(Tile_1.default));

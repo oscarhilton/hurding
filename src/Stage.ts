@@ -125,6 +125,7 @@ export default class Stage {
               this.levelTiles.push(new Water(neighbouringTiles, x, y, z));
               break;
             case TILES.spawn:
+              console.log(neighbouringTiles);
               // Update camera position variable
               cameraPosition = { x: x * TILE_SIZE, y: y * TILE_SIZE };
               // Add the ducks

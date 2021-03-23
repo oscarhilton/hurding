@@ -5,7 +5,8 @@ var three_1 = require("three");
 var cannon_1 = require("cannon");
 exports.SIZE = 8;
 var Tile = /** @class */ (function () {
-    function Tile(killsDucks, colour, x, y, z, texture) {
+    function Tile(neighbouringTiles, killsDucks, colour, x, y, z, texture) {
+        this.neighbouringTiles = neighbouringTiles;
         this.killsDucks = killsDucks;
         // Physics constructor
         this.halfExtents = new cannon_1.Vec3(exports.SIZE / 2, exports.SIZE / 2, exports.SIZE / 2);

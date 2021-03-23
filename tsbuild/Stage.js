@@ -66,12 +66,10 @@ var Stage = /** @class */ (function () {
         var zA = currentLevelTiles.segmentsZ[zPosition + 1] || null;
         var zC = currentLevelTiles.segmentsZ[zPosition] || null;
         var zB = currentLevelTiles.segmentsZ[zPosition - 1] || null;
-        console.log(zA, zC, zB);
         if (!zC)
             return new Error("Could not find current Tile position Z axis");
         var findNeighbours = function (zLevel) {
             var _a, _b, _c, _d, _e, _f, _g, _h, _j;
-            console.log(zLevel.rows);
             return {
                 TL: ((_a = zLevel.rows[xPosition - 1]) === null || _a === void 0 ? void 0 : _a[yPosition + 1]) || null,
                 TM: ((_b = zLevel.rows[xPosition]) === null || _b === void 0 ? void 0 : _b[yPosition + 1]) || null,
@@ -102,12 +100,12 @@ var Stage = /** @class */ (function () {
                 // run X axis loop
                 for (var x = 0; x < currentY.length; x++) {
                     var neighbouringTiles = this.returnNeighbouringTiles(x, y, z, level);
-                    console.log(neighbouringTiles);
                     switch (currentY[x]) {
                         case tiles_1.default.water:
-                            this.levelTiles.push(new Water_1.default(x, y, z));
+                            this.levelTiles.push(new Water_1.default(neighbouringTiles, x, y, z));
                             break;
                         case tiles_1.default.spawn:
+                            console.log(neighbouringTiles);
                             // Update camera position variable
                             cameraPosition = { x: x * Tile_1.SIZE, y: y * Tile_1.SIZE };
                             // Add the ducks
@@ -121,17 +119,17 @@ var Stage = /** @class */ (function () {
                                 this.flock = new Flock_1.default(this.ducks);
                             }
                         case tiles_1.default.floor:
-                            this.levelTiles.push(new Floor_1.default(x, y, z));
+                            this.levelTiles.push(new Floor_1.default(neighbouringTiles, x, y, z));
                             break;
                         case tiles_1.default.rock:
-                            this.levelTiles.push(new Rock_1.default(x, y, z));
+                            this.levelTiles.push(new Rock_1.default(neighbouringTiles, x, y, z));
                             this.distractions.push(new DistractionRadius_1.default(this.ducks, x * Tile_1.SIZE, y * Tile_1.SIZE, z * Tile_1.SIZE, false, 2, 0.1));
                             break;
                         case tiles_1.default.bridge:
-                            this.levelTiles.push(new Bridge_1.default(x, y, z));
+                            this.levelTiles.push(new Bridge_1.default(neighbouringTiles, x, y, z));
                             break;
                         case tiles_1.default.distraction:
-                            this.levelTiles.push(new Distraction_1.default(x, y, z));
+                            this.levelTiles.push(new Distraction_1.default(neighbouringTiles, x, y, z));
                             this.distractions.push(new DistractionRadius_1.default(this.ducks, x * Tile_1.SIZE, y * Tile_1.SIZE, z * Tile_1.SIZE, false, 20));
                             break;
                         default:

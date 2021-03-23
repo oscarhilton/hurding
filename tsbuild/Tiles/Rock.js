@@ -21,8 +21,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var Tile_1 = __importDefault(require("./Tile"));
 var Rock = /** @class */ (function (_super) {
     __extends(Rock, _super);
-    function Rock(x, y, z) {
-        return _super.call(this, false, 0xd3d3d3, x, y, z, null) || this;
+    function Rock(neighbouringTiles, x, y, z) {
+        return _super.call(this, neighbouringTiles, false, 0xd3d3d3, x, y, z, null) || this;
     }
     return Rock;
 }(Tile_1.default));
