@@ -120,10 +120,9 @@ export default class Stage {
         // run X axis loop
         for (var x = 0; x < currentY.length; x++) {
           const neighbouringTiles = this.returnNeighbouringTiles(x, y, z, level);
-          console.log(neighbouringTiles);
           switch(currentY[x]) {
             case TILES.water:
-              this.levelTiles.push(new Water(x, y, z));
+              this.levelTiles.push(new Water(neighbouringTiles, x, y, z));
               break;
             case TILES.spawn:
               // Update camera position variable
@@ -139,17 +138,17 @@ export default class Stage {
                 this.flock = new Flock(this.ducks);
               }
             case TILES.floor:
-              this.levelTiles.push(new Floor(x, y, z));
+              this.levelTiles.push(new Floor(neighbouringTiles, x, y, z));
               break;
             case TILES.rock:
-              this.levelTiles.push(new Rock(x, y, z));
+              this.levelTiles.push(new Rock(neighbouringTiles, x, y, z));
               this.distractions.push(new DistractionRadius(this.ducks, x * TILE_SIZE, y * TILE_SIZE, z * TILE_SIZE, false, 2, 0.1));
               break;
             case TILES.bridge:
-              this.levelTiles.push(new Bridge(x, y, z));
+              this.levelTiles.push(new Bridge(neighbouringTiles, x, y, z));
               break;
             case TILES.distraction:
-              this.levelTiles.push(new Distraction(x, y, z));
+              this.levelTiles.push(new Distraction(neighbouringTiles, x, y, z));
               this.distractions.push(new DistractionRadius(this.ducks, x * TILE_SIZE, y * TILE_SIZE, z * TILE_SIZE, false, 20));
               break;
             default:

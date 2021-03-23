@@ -6,8 +6,8 @@ import { World } from "cannon";
 export default class Bridge extends Tile {
   object: any;
 
-  constructor(x: number, y: number, z: number) {
-    super(false, 0xD2691E, x, y, z, null);
+  constructor(neighbouringTiles: object, x: number, y: number, z: number) {
+    super(neighbouringTiles, false, 0xD2691E, x, y, z, null);
     const loader = new OBJLoader();
     loader.load("objects/logs.obj", root => this.object = root);
   }

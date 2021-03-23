@@ -4,6 +4,7 @@ import { World, Box, Body, Vec3 } from "cannon";
 export const SIZE = 8;
 
 export default class Tile {
+  neighbouringTiles: object;
   killsDucks: boolean;
   halfExtents: Vec3;
   shape: Box;
@@ -13,7 +14,8 @@ export default class Tile {
   mesh: Mesh;
   colour: any;
 
-  constructor(killsDucks: boolean, colour: any, x: number, y: number, z: number, texture?: any,) {
+  constructor(neighbouringTiles: object, killsDucks: boolean, colour: any, x: number, y: number, z: number, texture?: any,) {
+    this.neighbouringTiles = neighbouringTiles;
     this.killsDucks = killsDucks;
 
     // Physics constructor
