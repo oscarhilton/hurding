@@ -117,6 +117,6 @@ export default class Tile {
     world.addBody(this.body);
     scene.add(this.mesh);
 
-    new Gizmo(scene, this.x * SIZE, this.y * SIZE, this.z * SIZE);
+    new Gizmo(0x00ff00, scene, this.x * SIZE, this.y * SIZE, this.z * SIZE);
   }
 }

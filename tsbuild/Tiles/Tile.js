@@ -81,7 +81,7 @@ var Tile = /** @class */ (function () {
         this.body.addShape(this.shape);
         world.addBody(this.body);
         scene.add(this.mesh);
-        new Gizmo_1.default(scene, this.x * exports.SIZE, this.y * exports.SIZE, this.z * exports.SIZE);
+        new Gizmo_1.default(0x00ff00, scene, this.x * exports.SIZE, this.y * exports.SIZE, this.z * exports.SIZE);
     };
     return Tile;
 }());

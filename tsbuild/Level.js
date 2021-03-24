@@ -68,8 +68,6 @@ var Level = /** @class */ (function () {
                 // run X axis loop
                 for (var x = 0; x < currentY.length; x++) {
                     var neighbouringTiles = this.returnNeighbouringTiles(x, y, z, this);
-                    console.log(currentY[x]);
-                    console.log(neighbouringTiles, z, this.segmentsZ.length);
                     switch (currentY[x]) {
                         case tiles_1.default.water:
                             this.levelTiles.push(new Water_1.default(neighbouringTiles, x, y, z));
@@ -115,11 +113,11 @@ var Level = /** @class */ (function () {
             tile.setup(world, scene);
         }
     };
-    Level.prototype.update = function (ducks) {
+    Level.prototype.update = function (scene, ducks) {
         if (this.distractions.length > 0) {
             for (var _i = 0, _a = this.distractions; _i < _a.length; _i++) {
                 var distraction = _a[_i];
-                distraction.update();
+                distraction.update(scene);
             }
         }
         if (this.flock !== null) {

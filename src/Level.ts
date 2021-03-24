@@ -77,8 +77,6 @@ export default class Level {
         // run X axis loop
         for (var x = 0; x < currentY.length; x++) {
           let neighbouringTiles = this.returnNeighbouringTiles(x, y, z, this);
-          console.log(currentY[x]);
-          console.log(neighbouringTiles, z, this.segmentsZ.length);
           switch(currentY[x]) {
             case TILES.water:
               this.levelTiles.push(new Water(neighbouringTiles, x, y, z));
@@ -125,10 +123,10 @@ export default class Level {
       tile.setup(world, scene);
     }
   }
-  update(ducks: Duck[]) {
+  update(scene: Scene, ducks: Duck[]) {
     if (this.distractions.length > 0) {
       for (const distraction of this.distractions) {
-        distraction.update()
+        distraction.update(scene)
       }
     }
     if (this.flock !== null) {

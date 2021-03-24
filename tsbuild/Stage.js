@@ -30,6 +30,8 @@ var Stage = /** @class */ (function () {
         // Set up game;
         this.setupGame();
     }
+    Stage.prototype.showDebugGizmos = function () {
+    };
     Stage.prototype.setupGame = function () {
         console.log("SETTING UP GAME");
         // Set up level
@@ -58,7 +60,7 @@ var Stage = /** @class */ (function () {
         if (this.level) {
             requestAnimationFrame(this.loop.bind(this));
             this.simulationLoop(0);
-            this.level.update(this.ducks);
+            this.level.update(this.three.scene, this.ducks);
             this.renderLoop();
         }
     };

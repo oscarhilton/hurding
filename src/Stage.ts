@@ -44,6 +44,10 @@ export default class Stage {
     this.setupGame();
   }
 
+  showDebugGizmos() {
+
+  }
+
   setupGame() {
     console.log("SETTING UP GAME");
     // Set up level
@@ -74,7 +78,7 @@ export default class Stage {
     if (this.level) {
       requestAnimationFrame(this.loop.bind(this));
       this.simulationLoop(0);
-      this.level.update(this.ducks);
+      this.level.update(this.three.scene, this.ducks);
       this.renderLoop();
     }
   }
