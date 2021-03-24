@@ -8,6 +8,7 @@ var three_1 = require("three");
 var cannon_1 = require("cannon");
 var tiles_1 = __importDefault(require("../tiles"));
 var LoadTexture_1 = __importDefault(require("../textures/LoadTexture"));
+var Gizmo_1 = __importDefault(require("../Gizmo"));
 exports.SIZE = 8;
 var DONT_SHOW_FACE = new three_1.MeshBasicMaterial({ visible: false });
 var Tile = /** @class */ (function () {
@@ -60,6 +61,9 @@ var Tile = /** @class */ (function () {
             faces.six, // BOTTOM
         ];
         this.killsDucks = killsDucks;
+        this.x = x;
+        this.y = y;
+        this.z = z;
         // Physics constructor
         this.halfExtents = new cannon_1.Vec3(exports.SIZE / 2, exports.SIZE / 2, exports.SIZE / 2);
         this.shape = new cannon_1.Box(this.halfExtents);
@@ -77,6 +81,7 @@ var Tile = /** @class */ (function () {
         this.body.addShape(this.shape);
         world.addBody(this.body);
         scene.add(this.mesh);
+        new Gizmo_1.default(scene, this.x * exports.SIZE, this.y * exports.SIZE, this.z * exports.SIZE);
     };
     return Tile;
 }());

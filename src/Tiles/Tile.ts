@@ -2,6 +2,7 @@ import { Scene, BoxGeometry, MeshPhongMaterial, Mesh, MeshBasicMaterial } from "
 import { World, Box, Body, Vec3 } from "cannon";
 import TILES from "../tiles";
 import LoadTexture from "../textures/LoadTexture";
+import Gizmo from "../Gizmo";
 
 export const SIZE = 8;
 const DONT_SHOW_FACE = new MeshBasicMaterial({ visible: false });
@@ -14,6 +15,9 @@ export default class Tile {
   geometry: BoxGeometry;
   mesh: Mesh;
   colour: any;
+  x: number;
+  y: number;
+  z: number;
 
   constructor(neighbouringTiles: any, killsDucks: boolean, x: number, y: number, z: number) {
     let faces = {
@@ -89,6 +93,10 @@ export default class Tile {
 
     this.killsDucks = killsDucks;
 
+    this.x = x;
+    this.y = y;
+    this.z = z;
+
     // Physics constructor
     this.halfExtents = new Vec3(SIZE / 2, SIZE / 2, SIZE / 2);
     this.shape = new Box(this.halfExtents);
@@ -108,5 +116,7 @@ export default class Tile {
     this.body.addShape(this.shape);
     world.addBody(this.body);
     scene.add(this.mesh);
+
+    new Gizmo(scene, this.x * SIZE, this.y * SIZE, this.z * SIZE);
   }
 }

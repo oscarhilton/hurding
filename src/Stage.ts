@@ -3,6 +3,7 @@ import Duck from "./Duck";
 import ThreeInstance from "./ThreeInstance";
 import TheeInstance from "./ThreeInstance";
 import Levels from "./Levels";
+import Level from "./Level";
 
 const GRAVITY = -9.82 // real world gravity;
 export default class Stage {
@@ -16,6 +17,7 @@ export default class Stage {
   maxSubSteps: number;
   clock: number;
   currentLevelIndex: number;
+  level: Level | null;
 
   constructor() {
     // Set up THREE
@@ -33,17 +35,13 @@ export default class Stage {
     this.clock = 0;
 
     // Levels
+    this.level = null;
     this.currentLevelIndex = 0;
   
     // Handle THREE setup
-    this.setupThree();
+    this.three.setup();
     // Set up game;
     this.setupGame();
-  }
-
-  setupThree() {
-    console.log("SETTING UP THREE");
-    this.three.setup();
   }
 
   setupGame() {
@@ -58,6 +56,7 @@ export default class Stage {
       duck.setup();
     }
     // Run the loop
+    this.level = level;
     this.loop();
   }
 
@@ -67,29 +66,16 @@ export default class Stage {
     return this.clock = time;
   }
 
-  updateGameObjects() {
-    if (this.distractions.length > 0) {
-      for (const distraction of this.distractions) {
-        distraction.update()
-      }
-    }
-    if (this.flock !== null) {
-      // this.flock.update();
-    }
-    for (var duck of this.ducks) {
-      duck.update();
-    }
-    return;
-  }
-
   renderLoop() {
     return this.three.handleRender();
   }
 
   loop() {
-    requestAnimationFrame(this.loop.bind(this));
-    this.simulationLoop(0);
-    this.updateGameObjects();
-    this.renderLoop();
+    if (this.level) {
+      requestAnimationFrame(this.loop.bind(this));
+      this.simulationLoop(0);
+      this.level.update(this.ducks);
+      this.renderLoop();
+    }
   }
 }

@@ -125,4 +125,18 @@ export default class Level {
       tile.setup(world, scene);
     }
   }
+  update(ducks: Duck[]) {
+    if (this.distractions.length > 0) {
+      for (const distraction of this.distractions) {
+        distraction.update()
+      }
+    }
+    if (this.flock !== null) {
+      // this.flock.update();
+    }
+    for (var duck of ducks) {
+      duck.update();
+    }
+    return;
+  }
 }
