@@ -6,6 +6,6 @@ import { NeighbourGridResult } from '../NeighbourGrid';
 export default class Water extends Tile {
   constructor(neighbouringTiles: NeighbourGridResult, x: number, y: number, z: number) {
     console.log(neighbouringTiles);
-    super(neighbouringTiles, true, x, y, z);
+    super(neighbouringTiles, true, x, y, z, "/textures/sea/baseSea.png");
   }
 }

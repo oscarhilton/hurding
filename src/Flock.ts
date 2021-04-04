@@ -1,8 +1,7 @@
 import PhysicsMesh from "./PhysicsMesh";
 import { Vec3 } from "cannon";
 
-const AGENT_SPEED = 300;
-const DISTANCE_FROM_NEIGHBOUR = 2;
+const DISTANCE_FROM_NEIGHBOUR = 10;
 export default class Flock {
   flockBodies: PhysicsMesh[];
 
@@ -12,19 +11,21 @@ export default class Flock {
 
   update() {
     for (var myAgent of this.flockBodies) {
-      const flockInstance = this;
-      const alignment = flockInstance.computeAlignment(myAgent);
-      const cohesion = flockInstance.computeCohesion(myAgent);
-      const separation = flockInstance.computeSeparation(myAgent);
+      const alignment = this.computeAlignment(myAgent);
+      const cohesion = this.computeCohesion(myAgent);
+      const separation = this.computeSeparation(myAgent);
 
-      myAgent.body.velocity.x = alignment.x + cohesion.x + separation.x;
-      myAgent.body.velocity.y = alignment.y + cohesion.y + separation.y;
-      const oldZ = myAgent.body.velocity.z;
+      const force = new Vec3(
+        alignment.x + cohesion.x + separation.x,
+        alignment.y + cohesion.y + separation.y,
+        alignment.z + cohesion.z + separation.z
+      );
 
-      myAgent.body.velocity.normalize(AGENT_SPEED);
-      myAgent.body.velocity.z = oldZ;
-      return;
+      force.mult(0.5);
+
+      myAgent.addForce(force);
     }
+    return;
   }
 
   // Alignment is a behavior that causes a particular agent to line up with agents close by.

@@ -15,6 +15,7 @@ var Duck_1 = __importDefault(require("./Duck"));
 var Tile_1 = require("./Tiles/Tile");
 var DistractionRadius_1 = __importDefault(require("./DistractionRadius"));
 var Flock_1 = __importDefault(require("./Flock"));
+var Player_1 = __importDefault(require("./Player"));
 var Segment = /** @class */ (function () {
     function Segment(map) {
         this.rows = map.split(',').map(function (row) {
@@ -30,6 +31,7 @@ var Level = /** @class */ (function () {
         this.levelTiles = [];
         this.distractions = [];
         this.flock = null;
+        this.player = null;
     }
     Level.prototype.returnNeighbouringTiles = function (xPosition, yPosition, zPosition, currentLevelTiles) {
         // For Z, Z + 1 & Z - 1:
@@ -75,12 +77,16 @@ var Level = /** @class */ (function () {
                         case tiles_1.default.spawn:
                             // Update camera position variable
                             cameraPosition = { x: x * Tile_1.SIZE, y: y * Tile_1.SIZE };
+                            // Add the player
+                            this.player = new Player_1.default(x, y, z);
                             // Add the ducks
                             if (totalDucks > 0) {
                                 var columnDucks = 10 % totalDucks;
+                                var currentDuck = 0;
                                 for (var col = 0; col < columnDucks; col++) {
                                     for (var row = 0; row < totalDucks / columnDucks; row++) {
-                                        ducks.push(new Duck_1.default(world, scene, row * 1.1 + x * Tile_1.SIZE, col * 1.1 + y * Tile_1.SIZE));
+                                        ducks.push(new Duck_1.default((row / Tile_1.SIZE) + x * 1.1, (col / Tile_1.SIZE) + y * 1.1, currentDuck));
+                                        currentDuck++;
                                     }
                                 }
                                 this.flock = new Flock_1.default(ducks);
@@ -90,17 +96,17 @@ var Level = /** @class */ (function () {
                             break;
                         case tiles_1.default.rock:
                             this.levelTiles.push(new Rock_1.default(neighbouringTiles, x, y, z));
-                            this.distractions.push(new DistractionRadius_1.default(ducks, x * Tile_1.SIZE, y * Tile_1.SIZE, z * Tile_1.SIZE, false, 2, 0.1));
+                            this.distractions.push(new DistractionRadius_1.default(ducks, x, y, z, false, 2, 0.1));
                             break;
                         case tiles_1.default.bridge:
                             this.levelTiles.push(new Bridge_1.default(neighbouringTiles, x, y, z));
                             break;
                         case tiles_1.default.distraction:
                             this.levelTiles.push(new Distraction_1.default(neighbouringTiles, x, y, z));
-                            this.distractions.push(new DistractionRadius_1.default(ducks, x * Tile_1.SIZE, y * Tile_1.SIZE, z * Tile_1.SIZE, false, 20));
+                            this.distractions.push(new DistractionRadius_1.default(ducks, x, y, z, false, 20));
                             break;
                         default:
-                            continue;
+                            break;
                     }
                 }
             }
@@ -114,17 +120,18 @@ var Level = /** @class */ (function () {
         }
     };
     Level.prototype.update = function (scene, ducks) {
-        if (this.distractions.length > 0) {
-            for (var _i = 0, _a = this.distractions; _i < _a.length; _i++) {
-                var distraction = _a[_i];
-                distraction.update(scene);
+        for (var _i = 0, _a = this.distractions; _i < _a.length; _i++) {
+            var distraction = _a[_i];
+            for (var _b = 0, ducks_1 = ducks; _b < ducks_1.length; _b++) {
+                var duck = ducks_1[_b];
+                distraction.computeDistractionAmount(duck);
             }
         }
         if (this.flock !== null) {
-            // this.flock.update();
+            this.flock.update();
         }
-        for (var _b = 0, ducks_1 = ducks; _b < ducks_1.length; _b++) {
-            var duck = ducks_1[_b];
+        for (var _c = 0, ducks_2 = ducks; _c < ducks_2.length; _c++) {
+            var duck = ducks_2[_c];
             duck.update();
         }
         return;

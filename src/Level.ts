@@ -12,6 +12,7 @@ import Flock from "./Flock";
 import ThreeInstance from "./ThreeInstance";
 import { World } from "cannon";
 import { Scene } from "three";
+import Player from "./Player";
 export class Segment {
   rows: string[][];
 
@@ -27,12 +28,14 @@ export default class Level {
   levelTiles: Tile[];
   distractions: DistractionRadius[];
   flock: Flock | null;
+  player: Player | null;
 
   constructor(segments: Segment[]) {
     this.segmentsZ = segments;
     this.levelTiles = [];
     this.distractions = [];
     this.flock = null;
+    this.player = null;
   }
 
   returnNeighbouringTiles(xPosition: number, yPosition: number, zPosition: number, currentLevelTiles: Level): NeighbourGridResult {
@@ -84,12 +87,16 @@ export default class Level {
             case TILES.spawn:
               // Update camera position variable
               cameraPosition = { x: x * TILE_SIZE, y: y * TILE_SIZE };
+              // Add the player
+              this.player = new Player(x, y, z);
               // Add the ducks
               if (totalDucks > 0) {
                 const columnDucks = 10 % totalDucks;
+                let currentDuck = 0;
                 for (var col = 0; col < columnDucks; col++) {
                   for (var row = 0; row < totalDucks / columnDucks; row++) {
-                    ducks.push(new Duck(world, scene, row * 1.1 + x * TILE_SIZE, col * 1.1 + y * TILE_SIZE));
+                    ducks.push(new Duck((row / TILE_SIZE) + x * 1.1, (col / TILE_SIZE) + y * 1.1, currentDuck));
+                    currentDuck++;
                   }
                 }
                 this.flock = new Flock(ducks);
@@ -99,17 +106,17 @@ export default class Level {
               break;
             case TILES.rock:
               this.levelTiles.push(new Rock(neighbouringTiles, x, y, z));
-              this.distractions.push(new DistractionRadius(ducks, x * TILE_SIZE, y * TILE_SIZE, z * TILE_SIZE, false, 2, 0.1));
+              this.distractions.push(new DistractionRadius(ducks, x, y, z, false, 2, 0.1));
               break;
             case TILES.bridge:
               this.levelTiles.push(new Bridge(neighbouringTiles, x, y, z));
               break;
             case TILES.distraction:
               this.levelTiles.push(new Distraction(neighbouringTiles, x, y, z));
-              this.distractions.push(new DistractionRadius(ducks, x * TILE_SIZE, y * TILE_SIZE, z * TILE_SIZE, false, 20));
+              this.distractions.push(new DistractionRadius(ducks, x, y, z, false, 20));
               break;
             default:
-              continue;
+              break;
           }
         }
       }
@@ -124,13 +131,13 @@ export default class Level {
     }
   }
   update(scene: Scene, ducks: Duck[]) {
-    if (this.distractions.length > 0) {
-      for (const distraction of this.distractions) {
-        distraction.update(scene)
+    for (var distraction of this.distractions) {
+      for (var duck of ducks) {
+        distraction.computeDistractionAmount(duck);
       }
     }
     if (this.flock !== null) {
-      // this.flock.update();
+      this.flock.update();
     }
     for (var duck of ducks) {
       duck.update();

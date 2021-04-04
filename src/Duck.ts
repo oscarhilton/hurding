@@ -1,9 +1,9 @@
 import { Scene, BoxGeometry, MeshPhongMaterial, Mesh } from "three";
-import { World, Box, Body, Vec3 } from "cannon";
+import { World, Box, Body, Vec3, RigidVehicle } from "cannon";
 import PhysicsMesh from "./PhysicsMesh";
 
 const DEFAULT_SIZE = 1;
-const DEFAULT_MASS = 5;
+const DEFAULT_MASS = 50;
 
 export default class Duck extends PhysicsMesh {
   isAlive: boolean;
@@ -13,9 +13,10 @@ export default class Duck extends PhysicsMesh {
   geometry: BoxGeometry;
   material: MeshPhongMaterial;
   mesh: Mesh;
+  vehicle: RigidVehicle;
 
-  constructor(world: World, scene: Scene, x: number, y: number) {
-    super(world, scene);
+  constructor(x: number, y: number, z: number) {
+    super();
     // Charactoristics constructor
     this.isAlive = true;
     // Physics constructor
@@ -23,8 +24,14 @@ export default class Duck extends PhysicsMesh {
     this.shape = new Box(this.halfExtents);
     this.body = new Body({
       mass: DEFAULT_MASS,
-      position: new Vec3( x * DEFAULT_SIZE, y * DEFAULT_SIZE, 30 ),
+      position: new Vec3( x, y, 10 + z ),
     });
+
+    this.vehicle = new RigidVehicle({ chassisBody: this.body });
+
+    const oldZ = this.body.position.z
+    this.body.position.mult(8, this.body.position);
+    this.body.position.z = oldZ;
 
     // Geometry constructor
     this.geometry = new BoxGeometry( DEFAULT_SIZE, DEFAULT_SIZE, DEFAULT_SIZE);
@@ -33,18 +40,27 @@ export default class Duck extends PhysicsMesh {
     this.mesh.castShadow = true;
   }
 
-  setup() {
+  setup(scene: Scene, world: World) {
     this.body.addShape(this.shape);
-    this.world.addBody(this.body);
-    this.scene.add(this.mesh);
-    super.setup();
+    world.addBody(this.body);
+    scene.add(this.mesh);
+    super.setup(scene, world);
     return;
+  }
+
+  giveRandomInpulse() {
+    var x = 2 * Math.random() - 1;
+    var y = 2 * Math.random() - 1;
+    var z = 2 * Math.random() - 1;
+    const randomVector = new Vec3(x, y, z).mult(10);
+    super.addForce(randomVector);
   }
 
   update() {
     super.update();
 
     if (this.isAlive) {
+      this.giveRandomInpulse();
     } else {
       console.log("duck is dead");
     }

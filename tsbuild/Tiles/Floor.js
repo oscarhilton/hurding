@@ -24,7 +24,7 @@ var Floor = /** @class */ (function (_super) {
     function Floor(neighbouringTiles, x, y, z) {
         var _this = this;
         console.log(neighbouringTiles);
-        _this = _super.call(this, neighbouringTiles, true, x, y, z) || this;
+        _this = _super.call(this, neighbouringTiles, true, x, y, z, "/textures/grass/baseGrass.jpeg") || this;
         return _this;
     }
     return Floor;

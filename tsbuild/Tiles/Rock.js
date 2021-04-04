@@ -24,7 +24,7 @@ var Rock = /** @class */ (function (_super) {
     function Rock(neighbouringTiles, x, y, z) {
         var _this = this;
         console.log(neighbouringTiles);
-        _this = _super.call(this, neighbouringTiles, true, x, y, z) || this;
+        _this = _super.call(this, neighbouringTiles, true, x, y, z, "/textures/sea/baseSea.png") || this;
         return _this;
     }
     return Rock;

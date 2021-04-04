@@ -1,8 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var cannon_1 = require("cannon");
-var AGENT_SPEED = 300;
-var DISTANCE_FROM_NEIGHBOUR = 2;
+var DISTANCE_FROM_NEIGHBOUR = 10;
 var Flock = /** @class */ (function () {
     function Flock(flockBodies) {
         this.flockBodies = flockBodies;
@@ -10,17 +9,14 @@ var Flock = /** @class */ (function () {
     Flock.prototype.update = function () {
         for (var _i = 0, _a = this.flockBodies; _i < _a.length; _i++) {
             var myAgent = _a[_i];
-            var flockInstance = this;
-            var alignment = flockInstance.computeAlignment(myAgent);
-            var cohesion = flockInstance.computeCohesion(myAgent);
-            var separation = flockInstance.computeSeparation(myAgent);
-            myAgent.body.velocity.x = alignment.x + cohesion.x + separation.x;
-            myAgent.body.velocity.y = alignment.y + cohesion.y + separation.y;
-            var oldZ = myAgent.body.velocity.z;
-            myAgent.body.velocity.normalize(AGENT_SPEED);
-            myAgent.body.velocity.z = oldZ;
-            return;
+            var alignment = this.computeAlignment(myAgent);
+            var cohesion = this.computeCohesion(myAgent);
+            var separation = this.computeSeparation(myAgent);
+            var force = new cannon_1.Vec3(alignment.x + cohesion.x + separation.x, alignment.y + cohesion.y + separation.y, alignment.z + cohesion.z + separation.z);
+            force.mult(0.5);
+            myAgent.addForce(force);
         }
+        return;
     };
     // Alignment is a behavior that causes a particular agent to line up with agents close by.
     Flock.prototype.computeAlignment = function (myAgent) {

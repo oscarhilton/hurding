@@ -2,7 +2,7 @@ import { Scene, BoxGeometry, MeshPhongMaterial, Mesh, MeshBasicMaterial } from "
 import { World, Box, Body, Vec3 } from "cannon";
 import TILES from "../tiles";
 import LoadTexture from "../textures/LoadTexture";
-import Gizmo from "../Gizmo";
+// import Gizmo from "../Gizmo";
 
 export const SIZE = 8;
 const DONT_SHOW_FACE = new MeshBasicMaterial({ visible: false });
@@ -19,7 +19,7 @@ export default class Tile {
   y: number;
   z: number;
 
-  constructor(neighbouringTiles: any, killsDucks: boolean, x: number, y: number, z: number) {
+  constructor(neighbouringTiles: any, killsDucks: boolean, x: number, y: number, z: number, topTexturePath: string) {
     let faces = {
       one: DONT_SHOW_FACE,
       two: DONT_SHOW_FACE,
@@ -29,7 +29,7 @@ export default class Tile {
       six: DONT_SHOW_FACE,
     };
 
-    const top = new MeshPhongMaterial({ opacity: 0.5, map: LoadTexture("/textures/sea/baseSea.png") });
+    const top = new MeshPhongMaterial({ opacity: 0.5, map: LoadTexture(topTexturePath) });
     const blue = new MeshPhongMaterial({ opacity: 0.5, color: 0xffff00 });
 
     if (neighbouringTiles) {
@@ -41,7 +41,6 @@ export default class Tile {
       } = neighbouringTiles;
 
     if (
-      !layerBelowNeighbours &&
       layerAboveNeighbours?.TM === TILES.nothing || null
     ) {
       faces.one = top;
@@ -107,7 +106,7 @@ export default class Tile {
 
     // Geometry constructor
     this.geometry = new BoxGeometry( SIZE, SIZE, SIZE);
-    this.mesh = new Mesh( this.geometry, material );
+    this.mesh = new Mesh( this.geometry, top );
     this.mesh.castShadow = true;
     this.mesh.position.set(x * SIZE, y * SIZE, z * SIZE);
   }
@@ -117,6 +116,6 @@ export default class Tile {
     world.addBody(this.body);
     scene.add(this.mesh);
 
-    new Gizmo(0x00ff00, scene, this.x * SIZE, this.y * SIZE, this.z * SIZE);
+    // new Gizmo(0x00ff00, scene, this.x * SIZE, this.y * SIZE, this.z * SIZE);
   }
 }

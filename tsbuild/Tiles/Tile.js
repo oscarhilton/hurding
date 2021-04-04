@@ -8,11 +8,11 @@ var three_1 = require("three");
 var cannon_1 = require("cannon");
 var tiles_1 = __importDefault(require("../tiles"));
 var LoadTexture_1 = __importDefault(require("../textures/LoadTexture"));
-var Gizmo_1 = __importDefault(require("../Gizmo"));
+// import Gizmo from "../Gizmo";
 exports.SIZE = 8;
 var DONT_SHOW_FACE = new three_1.MeshBasicMaterial({ visible: false });
 var Tile = /** @class */ (function () {
-    function Tile(neighbouringTiles, killsDucks, x, y, z) {
+    function Tile(neighbouringTiles, killsDucks, x, y, z, topTexturePath) {
         var faces = {
             one: DONT_SHOW_FACE,
             two: DONT_SHOW_FACE,
@@ -21,13 +21,12 @@ var Tile = /** @class */ (function () {
             five: DONT_SHOW_FACE,
             six: DONT_SHOW_FACE,
         };
-        var top = new three_1.MeshPhongMaterial({ opacity: 0.5, map: LoadTexture_1.default("/textures/sea/baseSea.png") });
+        var top = new three_1.MeshPhongMaterial({ opacity: 0.5, map: LoadTexture_1.default(topTexturePath) });
         var blue = new three_1.MeshPhongMaterial({ opacity: 0.5, color: 0xffff00 });
         if (neighbouringTiles) {
             // as a die, 1 on top, 6 on bottom.
             var layerCurrentNeighbours = neighbouringTiles.layerCurrentNeighbours, layerAboveNeighbours = neighbouringTiles.layerAboveNeighbours, layerBelowNeighbours = neighbouringTiles.layerBelowNeighbours;
-            if (!layerBelowNeighbours &&
-                (layerAboveNeighbours === null || layerAboveNeighbours === void 0 ? void 0 : layerAboveNeighbours.TM) === tiles_1.default.nothing || null) {
+            if ((layerAboveNeighbours === null || layerAboveNeighbours === void 0 ? void 0 : layerAboveNeighbours.TM) === tiles_1.default.nothing || null) {
                 faces.one = top;
             }
             if (layerBelowNeighbours === null) {
@@ -73,7 +72,7 @@ var Tile = /** @class */ (function () {
         });
         // Geometry constructor
         this.geometry = new three_1.BoxGeometry(exports.SIZE, exports.SIZE, exports.SIZE);
-        this.mesh = new three_1.Mesh(this.geometry, material);
+        this.mesh = new three_1.Mesh(this.geometry, top);
         this.mesh.castShadow = true;
         this.mesh.position.set(x * exports.SIZE, y * exports.SIZE, z * exports.SIZE);
     }
@@ -81,7 +80,7 @@ var Tile = /** @class */ (function () {
         this.body.addShape(this.shape);
         world.addBody(this.body);
         scene.add(this.mesh);
-        new Gizmo_1.default(0x00ff00, scene, this.x * exports.SIZE, this.y * exports.SIZE, this.z * exports.SIZE);
+        // new Gizmo(0x00ff00, scene, this.x * SIZE, this.y * SIZE, this.z * SIZE);
     };
     return Tile;
 }());

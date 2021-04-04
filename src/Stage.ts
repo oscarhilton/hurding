@@ -30,7 +30,7 @@ export default class Stage {
     this.fixedTimeStep = 1.0 / 60.0; // seconds
     this.maxSubSteps = 10;
     // Number of starting ducks
-    this.totalDucks = 100;
+    this.totalDucks = 3;
     // Clock
     this.clock = 0;
 
@@ -57,7 +57,7 @@ export default class Stage {
     this.world.gravity.set(0, 0, GRAVITY);
     // Set up all the ducks
     for (var duck of this.ducks) {
-      duck.setup();
+      duck.setup(this.three.scene, this.world);
     }
     // Run the loop
     this.level = level;

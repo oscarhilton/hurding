@@ -1,45 +1,54 @@
 "use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 var cannon_1 = require("cannon");
-var Gizmo_1 = __importDefault(require("./Gizmo"));
+// import Gizmo from "./Gizmo";
 var Tile_1 = require("./Tiles/Tile");
-var AGENT_SPEED = 100;
 var DISTANCE_FROM_DISTRACTOR = 300;
+var ATTRACTION_DISTANCE = 200;
 var DestractionRadius = /** @class */ (function () {
-    function DestractionRadius(distractBodies, x, y, z, inverse, strength, distance) {
+    function DestractionRadius(distractBodies, x, y, z, inverse, multiplier, distance) {
         this.distractBodies = distractBodies;
-        this.distractOrigin = new cannon_1.Vec3(x, y, z).mult(Tile_1.SIZE);
+        this.distractOrigin = new cannon_1.Vec3(x * Tile_1.SIZE, y * Tile_1.SIZE, z * Tile_1.SIZE);
         this.inverse = inverse;
         this.distance = distance || DISTANCE_FROM_DISTRACTOR;
-        this.strength = strength || 1;
-        console.log(this.distractOrigin);
+        this.multiplier = multiplier || 1;
     }
-    DestractionRadius.prototype.update = function (scene) {
-        for (var _i = 0, _a = this.distractBodies; _i < _a.length; _i++) {
-            var myAgent = _a[_i];
-            var distractionAmount = this.computeDistractionAmount(myAgent);
-            myAgent.body.velocity.x = distractionAmount.x;
-            myAgent.body.velocity.y = distractionAmount.y;
-            var oldZ = myAgent.body.velocity.z;
-            myAgent.body.velocity.z = oldZ;
-        }
-        new Gizmo_1.default(0xFF0000, scene, this.distractOrigin.x, this.distractOrigin.y, this.distractOrigin.z);
-        return;
-    };
+    // update(scene: Scene) {
+    //   for (var myAgent of this.distractBodies) {
+    //     const force = this.computeDistractionAmount(myAgent);
+    //   }
+    //   // new Gizmo(0xFF0000, scene, this.distractOrigin.x, this.distractOrigin.y, this.distractOrigin.z);
+    //   return;
+    // }
     DestractionRadius.prototype.computeDistractionAmount = function (myAgent) {
-        var attracton = myAgent.body.position.negate(this.distractOrigin);
-        var distance = this.distractOrigin.distanceTo(myAgent.body.position);
-        attracton.normalize();
-        attracton.mult(1500 / Math.pow(distance, 2), new cannon_1.Vec3(10, 10, 10));
-        attracton.mult(Tile_1.SIZE);
-        if (this.inverse) {
-            attracton.x *= -1;
-            attracton.y *= -1;
+        // What is the forces direction?
+        var force = new cannon_1.Vec3();
+        this.distractOrigin.vsub(myAgent.body.position, force);
+        // const angle = new Vec3();
+        // const copy = myAgent.body.quaternion.copy();
+        // copy.toAxisAngle(this.distractOrigin, angle);
+        // console.log(angle);
+        // const normAgent = myAgent.body.position.normalize();
+        // const normOrigin = this.distractOrigin.normalize();
+        console.log(myAgent.body.position.dot(this.distractOrigin));
+        var isInFieldOfView = true;
+        // What is the distance?
+        var distance = force.norm();
+        if (distance < ATTRACTION_DISTANCE && isInFieldOfView) { // If the distance is less than X amount
+            // Normalize the force
+            force.normalize();
+            // Make the strength
+            var strength = (this.multiplier * myAgent.body.mass) / (distance < 0 ? Math.pow(distance, 2) : 0.0001);
+            // Multply the force by the strength
+            force.mult(strength);
+            if (this.inverse) {
+                force.mult(-1);
+            }
+            return myAgent.addForce(force);
         }
-        return attracton;
+        else {
+            return;
+        }
     };
     return DestractionRadius;
 }());

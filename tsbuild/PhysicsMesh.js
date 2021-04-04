@@ -1,18 +1,33 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+var cannon_1 = require("cannon");
 var PhysicsMesh = /** @class */ (function () {
-    function PhysicsMesh(world, scene) {
-        this.world = world;
-        this.scene = scene;
+    function PhysicsMesh() {
         this.body = null;
         this.mesh = null;
+        // Forces
+        this.forces = [];
     }
-    PhysicsMesh.prototype.setup = function () {
+    PhysicsMesh.prototype.setup = function (scene, world) {
         if (this.body) {
             this.body.addEventListener("collide", this.handleCollisions.bind(this));
         }
     };
+    PhysicsMesh.prototype.addForce = function (force) {
+        this.forces.push(force);
+    };
     PhysicsMesh.prototype.update = function () {
+        if (this.forces.length > 0) {
+            var accumForce = this.forces.reduce(function (totalForce, currentForce) {
+                var newForce = new cannon_1.Vec3(0, 0, 0);
+                totalForce.vadd(currentForce, newForce);
+                return newForce;
+            }, new cannon_1.Vec3(0, 0, 0));
+            accumForce.normalize();
+            this.body.velocity.x = accumForce.x * 4;
+            this.body.velocity.y = accumForce.y * 4;
+            this.forces = [];
+        }
         this.mesh.position.x = this.body.position.x;
         this.mesh.position.y = this.body.position.y;
         this.mesh.position.z = this.body.position.z;
